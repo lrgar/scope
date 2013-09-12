@@ -110,6 +110,13 @@ class Tag:
 	def _list(self):
 		return _list(_TagImpl(self._class))
 
+class IndentTag(TagBase):
+	def serialize(self, context):
+		context.indent()
+		for child in self.children:
+			context.serialize(child)
+		context.unindent()
+
 #
 # Implementation-detail
 #
@@ -151,14 +158,7 @@ class _ForEachTag:
 	def _list(self):
 		return itertools.chain(* list(_list(self._function(e)) for e in self._enumerable))
 
-class _IndentTag(TagBase):
-	def serialize(self, context):
-		context.indent()
-		for child in self.children:
-			context.serialize(child)
-		context.unindent()
-
-class _BlockTagImpl:
+class _SpanTagImpl:
 	def __init__(self):
 		self._children = []
 
@@ -172,15 +172,15 @@ class _BlockTagImpl:
 	def _list(self):
 		return itertools.chain(* list(_list(e) for e in self._children))
 
-class _BlockTag:
+class _SpanTag:
 	def __init__(self):
 		self._children = []
 
 	def __getitem__(self, children):
-		return _BlockTagImpl()[children]
+		return _SpanTagImpl()[children]
 
 	def _list(self):
-		return _BlockTagImpl()._list()
+		return _SpanTagImpl()._list()
 
 def _flatten(value):
 	if isinstance(value, str):
@@ -203,8 +203,7 @@ def for_each(elements, function):
 	return _ForEachTag(elements, function)
 
 """Indent elements in the block."""
-indent = _IndentTag()
+indent = IndentTag()
 
 """Group elements. These will be appended to the parent."""
-block = _BlockTag()
-
+span = _SpanTag()

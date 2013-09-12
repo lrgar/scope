@@ -17,6 +17,13 @@ class MockTag(scope.TagBase):
 		self._name = name
 		return self
 
+	def serialize(self, context):
+		context.write('{0}'.format(self._name))
+		context.indent()
+		for child in self.children:
+			context.serialize(child)
+		context.unindent()
+
 	@property
 	def name(self):
 		return self._name
@@ -106,9 +113,9 @@ class TestTemplateSerializer(unittest.TestCase):
 
 		self.assertEqual(scope.Scope().flatten(template), expected)
 
-	def test_tag_block_1(self):
+	def test_tag_span_1(self):
 		template = mock_tag(name = 'parent') [
-			scope.block [
+			scope.span [
 				mock_tag(name = 'a'),
 				mock_tag(name = 'b')
 			]
@@ -123,13 +130,13 @@ class TestTemplateSerializer(unittest.TestCase):
 
 		self.assertEqual(scope.Scope().flatten(template), expected)
 		
-	def test_tag_block_2(self):
+	def test_tag_span_2(self):
 		template = mock_tag(name = 'parent') [
-			scope.block [
+			scope.span [
 				mock_tag(name = 'a'),
 				mock_tag(name = 'b')
 			],
-			scope.block [
+			scope.span [
 				mock_tag(name = 'c'),
 				mock_tag(name = 'd')
 			]
@@ -146,11 +153,11 @@ class TestTemplateSerializer(unittest.TestCase):
 
 		self.assertEqual(scope.Scope().flatten(template), expected)
 	
-	def test_tag_block_3(self):
+	def test_tag_span_3(self):
 		template = mock_tag(name = 'parent') [
-			scope.block [
+			scope.span [
 				mock_tag(name = 'a'),
-				scope.block [
+				scope.span [
 					mock_tag(name = 'b'),
 					mock_tag(name = 'c')
 				],
@@ -169,10 +176,10 @@ class TestTemplateSerializer(unittest.TestCase):
 
 		self.assertEqual(scope.Scope().flatten(template), expected)
 
-	def test_tag_block_4(self):
+	def test_tag_span_4(self):
 		template = mock_tag(name = 'parent') [
 			scope.for_each(range(0, 2),
-				function = lambda n: scope.block [
+				function = lambda n: scope.span [
 					mock_tag(name = 'a'),
 					mock_tag(name = 'b')
 				]
@@ -190,9 +197,9 @@ class TestTemplateSerializer(unittest.TestCase):
 
 		self.assertEqual(scope.Scope().flatten(template), expected)
 
-	def test_tag_block_5(self):
+	def test_tag_span_5(self):
 		template = mock_tag(name = 'parent') [
-			scope.block,
+			scope.span,
 		]
 
 		expected = MockTag()
@@ -201,10 +208,10 @@ class TestTemplateSerializer(unittest.TestCase):
 
 		self.assertEqual(scope.Scope().flatten(template), expected)
 		
-	def test_tag_block_6(self):
+	def test_tag_span_6(self):
 		template = mock_tag(name = 'parent') [
-			scope.block [
-				scope.block
+			scope.span [
+				scope.span
 			]
 		]
 
@@ -213,6 +220,58 @@ class TestTemplateSerializer(unittest.TestCase):
 		expected.children = []
 
 		self.assertEqual(scope.Scope().flatten(template), expected)
+
+	def test_tag_indent_3(self):
+		template = mock_tag(name = 'parent') [
+			scope.span [
+				mock_tag(name = 'a'),
+				scope.indent [
+					mock_tag(name = 'b'),
+					mock_tag(name = 'c')
+				],
+				mock_tag(name = 'd')
+			],
+		]
+
+		inner_indent = scope.IndentTag()
+		inner_indent.children = [
+			MockTag().set_arguments(name = 'b'),
+			MockTag().set_arguments(name = 'c')
+		]
+										  
+		expected = MockTag()
+		expected.set_arguments(name = 'parent')
+		expected.children = [
+			MockTag().set_arguments(name = 'a'),
+			inner_indent,
+			MockTag().set_arguments(name = 'd')
+		]
+
+		self.assertEqual(scope.Scope().flatten(template), expected)
+
+	def test_serialization_1(self):
+		template = mock_tag(name = 'element')
+
+		expected = 'element\n'
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
+	def test_serialization_2(self):
+		template = mock_tag(name = 'parent') [
+			mock_tag(name = 'child-1'),
+			mock_tag(name = 'child-2')
+		]
+
+		expected = 'parent\n    child-1\n    child-2\n'
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+		
+	def test_serialization_3(self):
+		template = mock_tag(name = 'element')
+
+		expected = 'element\n'
+
+		self.assertEqual(scope.Scope().serialize(scope.Scope().flatten(template)), expected)
 
 if __name__ == '__main__':
 	unittest.main()
