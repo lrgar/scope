@@ -645,19 +645,41 @@ public:
 """
 
 		self.assertEqual(scope.Scope().serialize(template), expected)
-		
+
 	def test_cpp_serializer_21(self):
 		template = cpp.tfile [
 			scope.new_line,
 			cpp.tclass('A') [
-				cpp.tattribute('std::string', 'var',
-				   static = True, const = True, default_value = '"var"')
+				cpp.tctor('A', visibility = cpp.PUBLIC) [
+					'// do nothing'
+				],
+				cpp.tctor('A', ['const A & other'])
 			]
 		]
 
 		expected = """
 class A {
-    static const std::string var = "var";
+    A(const A & other) {}
+public:
+    A() {
+        // do nothing
+    }
+}; // class A
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+	
+	def test_cpp_serializer_22(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tclass('A') [
+				cpp.tdtor('~A', virtual = True)
+			]
+		]
+
+		expected = """
+class A {
+    virtual ~A() {}
 }; // class A
 """
 

@@ -113,7 +113,7 @@ class CppStruct(CppClass):
 	def __init__(self):
 		super().__init__('struct', PUBLIC)
 
-class CppMethod(scope.TagBase):
+class CppMethodBase(scope.TagBase):
 	def __init__(self):
 		super().__init__()
 
@@ -132,7 +132,8 @@ class CppMethod(scope.TagBase):
 		if self._virtual: temp += 'virtual '
 
 		args = ', '.join(self._arguments)
-		temp += '{0} {1}({2})'.format(self._return_type, self._name, args)
+		if self._return_type is not None: temp += self._return_type + ' '
+		temp += '{1}({2})'.format(self._return_type, self._name, args)
 
 		if self._const: temp += ' const'
 
@@ -172,6 +173,42 @@ class CppMethod(scope.TagBase):
 	@property
 	def visibility(self):
 		return self._visibility
+
+class CppMethod(CppMethodBase):
+	def __init__(self):
+		super().__init__()
+
+	def set_arguments(self, return_type, name, arguments = [], *, visibility = DEFAULT, implemented = True, virtual = False, const = False):
+		return super().set_arguments(
+			return_type, name, arguments,
+			visibility = visibility,
+			implemented = implemented,
+			virtual = virtual,
+			const = const
+		)
+	
+class CppConstructor(CppMethodBase):
+	def __init__(self):
+		super().__init__()
+
+	def set_arguments(self, name, arguments = [], *, visibility = DEFAULT, implemented = True):
+		return super().set_arguments(
+			None, name, arguments,
+			visibility = visibility,
+			implemented = implemented
+		)
+
+class CppDestructor(CppMethodBase):
+	def __init__(self):
+		super().__init__()
+
+	def set_arguments(self, name, *, visibility = DEFAULT, implemented = True, virtual = False):
+		return super().set_arguments(
+			None, name, [],
+			visibility = visibility,
+			implemented = implemented,
+			virtual = virtual
+		)
 
 class CppAttribute(scope.TagBase):
 	def __init__(self):
@@ -248,4 +285,6 @@ tnamespace = scope.Tag(CppNamespace)
 tclass = scope.Tag(CppClass)
 tstruct = scope.Tag(CppStruct)
 tmethod = scope.Tag(CppMethod)
+tctor = scope.Tag(CppConstructor)
+tdtor = scope.Tag(CppDestructor)
 tattribute = scope.Tag(CppAttribute)
