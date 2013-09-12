@@ -336,7 +336,7 @@ class TestBaseLibrary(unittest.TestCase):
 
 class TestCppSerializer(unittest.TestCase):
 	def test_cpp_serializer_1(self):
-		template = cpp.cfile [
+		template = cpp.tfile [
 			'#include <string>'
 		]
 
@@ -345,8 +345,8 @@ class TestCppSerializer(unittest.TestCase):
 		self.assertEqual(scope.Scope().serialize(template), expected)
 
 	def test_cpp_serializer_2(self):
-		template = cpp.cfile [
-			cpp.cclass('Foo')
+		template = cpp.tfile [
+			cpp.tclass('Foo')
 		]
 
 		expected = """class Foo {\n}; // class Foo\n"""
@@ -354,8 +354,8 @@ class TestCppSerializer(unittest.TestCase):
 		self.assertEqual(scope.Scope().serialize(template), expected)
 
 	def test_cpp_serializer_3(self):
-		template = cpp.cfile [
-			cpp.cclass('Foo', superclasses = [(cpp.PUBLIC, 'Bar'), (cpp.PRIVATE, 'Baz')])
+		template = cpp.tfile [
+			cpp.tclass('Foo', superclasses = [(cpp.PUBLIC, 'Bar'), (cpp.PRIVATE, 'Baz')])
 		]
 
 		expected = """class Foo : public Bar, private Baz {\n}; // class Foo\n"""
@@ -363,10 +363,10 @@ class TestCppSerializer(unittest.TestCase):
 		self.assertEqual(scope.Scope().serialize(template), expected)
 		
 	def test_cpp_serializer_4(self):
-		template = cpp.cfile [
+		template = cpp.tfile [
 			scope.new_line,
-			cpp.cclass('Foo') [
-				cpp.cclass('Bar')
+			cpp.tclass('Foo') [
+				cpp.tclass('Bar')
 			]
 		]
 
@@ -380,11 +380,11 @@ class Foo {
 		self.assertEqual(scope.Scope().serialize(template), expected)
 		
 	def test_cpp_serializer_5(self):
-		template = cpp.cfile [
+		template = cpp.tfile [
 			scope.new_line,
-			cpp.cclass('Foo') [
-				cpp.cclass('Bar'),
-				cpp.cclass('Baz', visibility = cpp.PUBLIC)
+			cpp.tclass('Foo') [
+				cpp.tclass('Bar'),
+				cpp.tclass('Baz', visibility = cpp.PUBLIC)
 			]
 		]
 
@@ -401,10 +401,10 @@ public:
 		self.assertEqual(scope.Scope().serialize(template), expected)
 		
 	def test_cpp_serializer_6(self):
-		template = cpp.cfile [
+		template = cpp.tfile [
 			scope.new_line,
-			cpp.cclass('Foo'),
-			cpp.cclass('Bar')
+			cpp.tclass('Foo'),
+			cpp.tclass('Bar')
 		]
 
 		expected = """
@@ -417,11 +417,11 @@ class Bar {
 		self.assertEqual(scope.Scope().serialize(template), expected)
 		
 	def test_cpp_serializer_7(self):
-		template = cpp.cfile [
+		template = cpp.tfile [
 			scope.new_line,
-			cpp.cnamespace('Baz') [
-				cpp.cclass('Foo'),
-				cpp.cclass('Bar')
+			cpp.tnamespace('Baz') [
+				cpp.tclass('Foo'),
+				cpp.tclass('Bar')
 			]
 		]
 
@@ -437,10 +437,10 @@ namespace Baz {
 		self.assertEqual(scope.Scope().serialize(template), expected)
 
 	def test_cpp_serializer_8(self):
-		template = cpp.cfile [
+		template = cpp.tfile [
 			scope.new_line,
-			cpp.cnamespace('A'),
-			cpp.cnamespace('B')
+			cpp.tnamespace('A'),
+			cpp.tnamespace('B')
 		]
 
 		expected = """
@@ -451,5 +451,6 @@ namespace B {
 """
 		
 		self.assertEqual(scope.Scope().serialize(template), expected)
+
 if __name__ == '__main__':
 	unittest.main()

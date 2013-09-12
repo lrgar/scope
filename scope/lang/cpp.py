@@ -117,6 +117,6 @@ def _indent_and_print_elements(context, elements):
 		context.serialize(child)
 	context.unindent()
 
-cfile = scope.Tag(CppFile)
-cnamespace = scope.Tag(CppNamespace)
-cclass = scope.Tag(CppClass)
+tfile = scope.Tag(CppFile)
+tnamespace = scope.Tag(CppNamespace)
+tclass = scope.Tag(CppClass)
