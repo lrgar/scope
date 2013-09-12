@@ -78,6 +78,11 @@ class TagBase:
 		"""Method called for defining arguments for the object. Should be implemented by subclasses."""
 		pass
 
+	def set_children(self, children):
+		"""Set the children of the object."""
+		self.children = children
+		return self
+
 	def serialize(self, context):
 		"""Method called for serializing object. Should be implemented by subclasses."""
 		pass
