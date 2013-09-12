@@ -137,8 +137,8 @@ class Tag:
 	def __init__(self, class_):
 		self._class = class_
 
-	def __call__(self, ** args):
-		return _TagImpl(self._class)(** args)
+	def __call__(self, * args, ** kwargs):
+		return _TagImpl(self._class)(* args, ** kwargs)
 
 	def __getitem__(self, children):
 		return _TagImpl(self._class)[children]
@@ -169,8 +169,8 @@ class _TagImpl:
 		self._element = class_()
 		self._children = []
 
-	def __call__(self, ** args):
-		self._element.set_arguments(** args)
+	def __call__(self, * args, ** kwargs):
+		self._element.set_arguments(* args, ** kwargs)
 		return self
 
 	def __getitem__(self, children):
