@@ -9,12 +9,40 @@
 
 import itertools
 
+class SerializationOptions:
+	"""Provides additional options for the serialization."""
+
+	DEFAULT_INDENTATION_CHARACTER = ' '
+	DEFAULT_INDENTATION_FACTOR = 4
+
+	def __init__(self):
+		self._indentation_character = SerializationOptions.DEFAULT_INDENTATION_CHARACTER
+		self._indentation_factor = SerializationOptions.DEFAULT_INDENTATION_FACTOR
+
+	@property
+	def indentation_character(self):
+		"""Indentation character used for serialization."""
+		return self._indentation_character
+
+	@indentation_character.setter
+	def indentation_character(self, value):
+		self._indentation_character = value
+
+	@property
+	def indentation_factor(self):
+		"""Number of characters to be added for each indent operation."""
+		return self._indentation_factor
+
+	@indentation_factor.setter
+	def indentation_factor(self, value):
+		self._indentation_factor = value
+
 class Scope:
 	"""Offer utilities to work with scope-based code templates."""
 
-	def serialize(self, template):
+	def serialize(self, template, options = SerializationOptions()):
 		"""Serialize the provided template according to the language specifications."""
-		context = SerializerContext()
+		context = SerializerContext(options)
 		template.serialize(context)
 		return context.output
 
@@ -25,13 +53,14 @@ class Scope:
 class SerializerContext:
 	"""Context object for the output generator."""
 
-	def __init__(self):
+	def __init__(self, options):
 		self._output = ''
 		self._indentation = 0
+		self._options = options
 
 	def write(self, str):
 		"""Print provided string to the output."""
-		self._output += '    ' * self._indentation + str + '\n'
+		self._output += self._options.indentation_character * self._indentation + str + '\n'
 
 	def new_line(self):
 		"""Add a new blank line."""
@@ -39,11 +68,11 @@ class SerializerContext:
 
 	def indent(self):
 		"""Increase line indentation."""
-		self._indentation += 1
+		self._indentation += self._options.indentation_factor
 
 	def unindent(self):
 		"""Decrease line indentation."""
-		self._indentation -= 1
+		self._indentation -= self._options.indentation_factor
 
 	def serialize(self, object):
 		"""Serialize object and print it to the output."""
@@ -61,6 +90,11 @@ class SerializerContext:
 	def output(self):
 		"""Output of the serializer."""
 		return self._output
+	
+	@property
+	def options(self):
+		"""Options for the serializer."""
+		return self._options
 
 class TagBase:
 	"""Base class for scope-based template tags."""
