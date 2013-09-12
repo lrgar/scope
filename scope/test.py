@@ -30,7 +30,7 @@ class MockTag(scope.TagBase):
 
 mock_tag = scope.Tag(MockTag)
 
-class TestTemplateSerializer(unittest.TestCase):
+class TestBaseLibrary(unittest.TestCase):
 	def test_tag_handler_1(self):
 		template = mock_tag(name = 'element')
 
@@ -317,7 +317,7 @@ class TestTemplateSerializer(unittest.TestCase):
 		self.assertEqual(scope.Scope().serialize(template), expected)
 		
 	def test_serialization_7(self):
-		options = scope.SerializationOptions()
+		options = scope.SerializerOptions()
 		options.indentation_character = '\t'
 		options.indentation_factor = 1
 

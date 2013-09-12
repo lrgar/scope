@@ -9,15 +9,15 @@
 
 import itertools
 
-class SerializationOptions:
+class SerializerOptions:
 	"""Provides additional options for the serialization."""
 
 	DEFAULT_INDENTATION_CHARACTER = ' '
 	DEFAULT_INDENTATION_FACTOR = 4
 
 	def __init__(self):
-		self._indentation_character = SerializationOptions.DEFAULT_INDENTATION_CHARACTER
-		self._indentation_factor = SerializationOptions.DEFAULT_INDENTATION_FACTOR
+		self._indentation_character = SerializerOptions.DEFAULT_INDENTATION_CHARACTER
+		self._indentation_factor = SerializerOptions.DEFAULT_INDENTATION_FACTOR
 
 	@property
 	def indentation_character(self):
@@ -40,7 +40,7 @@ class SerializationOptions:
 class Scope:
 	"""Offer utilities to work with scope-based code templates."""
 
-	def serialize(self, template, options = SerializationOptions()):
+	def serialize(self, template, options = SerializerOptions()):
 		"""Serialize the provided template according to the language specifications."""
 		context = SerializerContext(options)
 		template.serialize(context)
