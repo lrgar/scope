@@ -64,7 +64,7 @@ class CppClass(scope.TagBase):
 		self._unit_name = unit_name
 		self._default_visibility = default_visibility
 
-	def set_arguments(self, name, superclasses = [], visibility = DEFAULT):
+	def set_arguments(self, name, *, superclasses = [], visibility = DEFAULT):
 		self._name = name
 		self._visibility = visibility
 		self._superclasses = superclasses
