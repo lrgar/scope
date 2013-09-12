@@ -122,6 +122,10 @@ class IndentTag(TagBase):
 			context.serialize(child)
 		context.unindent()
 
+class NewLineTag(TagBase):
+	def serialize(self, context):
+		context.new_line()
+
 #
 # Implementation-detail
 #
@@ -212,3 +216,6 @@ indent = Tag(IndentTag)
 
 """Group elements. These will be appended to the parent."""
 span = _SpanTag()
+
+"""Print a new line. It doesn't print indentation."""
+new_line = Tag(NewLineTag)

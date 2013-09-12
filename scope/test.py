@@ -302,6 +302,19 @@ class TestTemplateSerializer(unittest.TestCase):
 		expected = 'parent\n    child-1\n    \n        str:child-2\n'
 
 		self.assertEqual(scope.Scope().serialize(template), expected)
+		
+	def test_serialization_6(self):
+		template = mock_tag(name = 'parent') [
+			mock_tag(name = 'child-1'),
+			scope.new_line,
+			scope.indent [
+				'str:child-2'
+			]
+		]
+
+		expected = 'parent\n    child-1\n\n        str:child-2\n'
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
 
 if __name__ == '__main__':
 	unittest.main()
