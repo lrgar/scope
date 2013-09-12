@@ -30,6 +30,26 @@ class CppFile(scope.TagBase):
 		for child in self.children:
 			context.serialize(child)
 
+class CppNamespace(scope.TagBase):
+	def __init__(self):
+		super().__init__()
+
+	def set_arguments(self, name):
+		self._name = name
+		return self
+
+	def serialize(self, context):
+		context.write('namespace {0} {{'.format(self._name))
+		context.indent()
+		for child in self.children:
+			context.serialize(child)
+		context.unindent()
+		context.write('}} // namespace {0}'.format(self._name))
+
+	@property
+	def name(self):
+		return self._name
+
 class CppClass(scope.TagBase):
 	def __init__(self, unit_name = 'class'):
 		super().__init__()
@@ -98,4 +118,5 @@ def _indent_and_print_elements(context, elements):
 	context.unindent()
 
 cfile = scope.Tag(CppFile)
+cnamespace = scope.Tag(CppNamespace)
 cclass = scope.Tag(CppClass)

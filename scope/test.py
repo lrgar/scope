@@ -399,6 +399,57 @@ public:
 """
 		
 		self.assertEqual(scope.Scope().serialize(template), expected)
+		
+	def test_cpp_serializer_6(self):
+		template = cpp.cfile [
+			scope.new_line,
+			cpp.cclass('Foo'),
+			cpp.cclass('Bar')
+		]
 
+		expected = """
+class Foo {
+}; // class Foo
+class Bar {
+}; // class Bar
+"""
+		
+		self.assertEqual(scope.Scope().serialize(template), expected)
+		
+	def test_cpp_serializer_7(self):
+		template = cpp.cfile [
+			scope.new_line,
+			cpp.cnamespace('Baz') [
+				cpp.cclass('Foo'),
+				cpp.cclass('Bar')
+			]
+		]
+
+		expected = """
+namespace Baz {
+    class Foo {
+    }; // class Foo
+    class Bar {
+    }; // class Bar
+} // namespace Baz
+"""
+		
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
+	def test_cpp_serializer_8(self):
+		template = cpp.cfile [
+			scope.new_line,
+			cpp.cnamespace('A'),
+			cpp.cnamespace('B')
+		]
+
+		expected = """
+namespace A {
+} // namespace A
+namespace B {
+} // namespace B
+"""
+		
+		self.assertEqual(scope.Scope().serialize(template), expected)
 if __name__ == '__main__':
 	unittest.main()
