@@ -7,6 +7,7 @@
 
 import unittest
 import scope
+import lang.cpp as cpp
 
 class MockTag(scope.TagBase):
 	def __init__(self):
@@ -332,6 +333,72 @@ class TestBaseLibrary(unittest.TestCase):
 		expected = 'parent\n\tchild-1\n\n\t\tstr:child-2\n'
 
 		self.assertEqual(scope.Scope().serialize(template, options), expected)
+
+class TestCppSerializer(unittest.TestCase):
+	def test_cpp_serializer_1(self):
+		template = cpp.cfile [
+			'#include <string>'
+		]
+
+		expected = """#include <string>\n"""
+		
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
+	def test_cpp_serializer_2(self):
+		template = cpp.cfile [
+			cpp.cclass('Foo')
+		]
+
+		expected = """class Foo {\n}; // class Foo\n"""
+		
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
+	def test_cpp_serializer_3(self):
+		template = cpp.cfile [
+			cpp.cclass('Foo', superclasses = [(cpp.PUBLIC, 'Bar'), (cpp.PRIVATE, 'Baz')])
+		]
+
+		expected = """class Foo : public Bar, private Baz {\n}; // class Foo\n"""
+		
+		self.assertEqual(scope.Scope().serialize(template), expected)
+		
+	def test_cpp_serializer_4(self):
+		template = cpp.cfile [
+			scope.new_line,
+			cpp.cclass('Foo') [
+				cpp.cclass('Bar')
+			]
+		]
+
+		expected = """
+class Foo {
+    class Bar {
+    }; // class Bar
+}; // class Foo
+"""
+		
+		self.assertEqual(scope.Scope().serialize(template), expected)
+		
+	def test_cpp_serializer_5(self):
+		template = cpp.cfile [
+			scope.new_line,
+			cpp.cclass('Foo') [
+				cpp.cclass('Bar'),
+				cpp.cclass('Baz', visibility = cpp.PUBLIC)
+			]
+		]
+
+		expected = """
+class Foo {
+    class Bar {
+    }; // class Bar
+public:
+    class Baz {
+    }; // class Baz
+}; // class Foo
+"""
+		
+		self.assertEqual(scope.Scope().serialize(template), expected)
 
 if __name__ == '__main__':
 	unittest.main()
