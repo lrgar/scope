@@ -183,6 +183,54 @@ def _from_visibility_to_string(visibility):
 	else:
 		raise ValueError('Invalid value for visibility.')
 
+class CppAttribute(scope.TagBase):
+	def __init__(self):
+		super().__init__()
+
+	def set_arguments(self, type, name, *, visibility = DEFAULT, static = False, const = False, default_value = None):
+		self._type = type
+		self._name = name
+		self._visibility = visibility
+		self._static = static
+		self._const = const
+		self._default_value = default_value
+		return self
+
+	def serialize(self, context):
+		line = ''
+		if self._static: line += 'static '
+		if self._const: line += 'const '
+		line += '{0} {1}'.format(self._type, self._name)
+		if self._default_value is not None:
+			line += ' = {0}'.format(self._default_value)
+		line += ';'
+
+		context.write(line)
+
+	@property
+	def type(self):
+		return self._type
+
+	@property
+	def name(self):
+		return self._name
+
+	@property
+	def visibility(self):
+		return self._visibility
+
+	@property
+	def static(self):
+		return self._static
+
+	@property
+	def const(self):
+		return self._const
+
+	@property
+	def default_value(self):
+		return self._default_value
+
 def _filter_by_visibility(children, visibility, default_visibility):
 	if default_visibility == visibility:
 		return [child for child in children if child.visibility in [visibility, DEFAULT]]
@@ -200,3 +248,4 @@ tnamespace = scope.Tag(CppNamespace)
 tclass = scope.Tag(CppClass)
 tstruct = scope.Tag(CppStruct)
 tmethod = scope.Tag(CppMethod)
+tattribute = scope.Tag(CppAttribute)

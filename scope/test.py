@@ -612,5 +612,56 @@ public:
 
 		self.assertEqual(scope.Scope().serialize(template), expected)
 
+	def test_cpp_serializer_19(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tclass('A') [
+				cpp.tattribute('int', 'var')
+			]
+		]
+
+		expected = """
+class A {
+    int var;
+}; // class A
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+		
+	def test_cpp_serializer_20(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tclass('A') [
+				cpp.tattribute('int', 'var', visibility = cpp.PUBLIC,
+				   const = True)
+			]
+		]
+
+		expected = """
+class A {
+public:
+    const int var;
+}; // class A
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+		
+	def test_cpp_serializer_21(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tclass('A') [
+				cpp.tattribute('std::string', 'var',
+				   static = True, const = True, default_value = '"var"')
+			]
+		]
+
+		expected = """
+class A {
+    static const std::string var = "var";
+}; // class A
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
 if __name__ == '__main__':
 	unittest.main()
