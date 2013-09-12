@@ -173,16 +173,6 @@ class CppMethod(scope.TagBase):
 	def visibility(self):
 		return self._visibility
 
-def _from_visibility_to_string(visibility):
-	if visibility is PUBLIC:
-		return 'public'
-	elif visibility is PRIVATE:
-		return 'private'
-	elif visibility is PROTECTED:
-		return 'protected'
-	else:
-		raise ValueError('Invalid value for visibility.')
-
 class CppAttribute(scope.TagBase):
 	def __init__(self):
 		super().__init__()
@@ -230,6 +220,16 @@ class CppAttribute(scope.TagBase):
 	@property
 	def default_value(self):
 		return self._default_value
+
+def _from_visibility_to_string(visibility):
+	if visibility is PUBLIC:
+		return 'public'
+	elif visibility is PRIVATE:
+		return 'private'
+	elif visibility is PROTECTED:
+		return 'protected'
+	else:
+		raise ValueError('Invalid value for visibility.')
 
 def _filter_by_visibility(children, visibility, default_visibility):
 	if default_visibility == visibility:
