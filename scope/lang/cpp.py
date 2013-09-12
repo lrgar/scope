@@ -34,17 +34,25 @@ class CppNamespace(scope.TagBase):
 	def __init__(self):
 		super().__init__()
 
-	def set_arguments(self, name):
+	def set_arguments(self, name = None):
 		self._name = name
 		return self
 
 	def serialize(self, context):
-		context.write('namespace {0} {{'.format(self._name))
+		if self._name is None:
+			context.write('namespace {')
+		else:
+			context.write('namespace {0} {{'.format(self._name))
+
 		context.indent()
 		for child in self.children:
 			context.serialize(child)
 		context.unindent()
-		context.write('}} // namespace {0}'.format(self._name))
+
+		if self._name is None:
+			context.write('} // namespace')
+		else:
+			context.write('}} // namespace {0}'.format(self._name))
 
 	@property
 	def name(self):

@@ -489,6 +489,19 @@ private:
 """
 
 		self.assertEqual(scope.Scope().serialize(template), expected)
-		
+
+	def test_cpp_serializer_11(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tnamespace
+		]
+
+		expected = """
+namespace {
+} // namespace
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
 if __name__ == '__main__':
 	unittest.main()
