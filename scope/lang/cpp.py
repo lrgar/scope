@@ -113,6 +113,66 @@ class CppStruct(CppClass):
 	def __init__(self):
 		super().__init__('struct', PUBLIC)
 
+class CppMethod(scope.TagBase):
+	def __init__(self):
+		super().__init__()
+
+	def set_arguments(self, return_type, name, arguments = [], *, visibility = DEFAULT, implemented = True, virtual = False, const = False):
+		self._return_type = return_type
+		self._name = name
+		self._visibility = visibility
+		self._virtual = virtual
+		self._arguments = arguments
+		self._implemented = implemented
+		self._const = const
+		return self
+
+	def serialize(self, context):
+		temp = ''
+		if self._virtual: temp += 'virtual '
+
+		args = ', '.join(self._arguments)
+		temp += '{0} {1}({2})'.format(self._return_type, self._name, args)
+
+		if self._const: temp += ' const'
+
+		if len(self.children) > 0:
+			context.write(temp + ' {')
+			_indent_and_print_elements(context, self.children)
+			context.write('}')
+		elif self._implemented:
+			context.write(temp + ' {}')
+		else:
+			context.write(temp + ';')
+
+	@property
+	def return_type(self):
+		return self._return_type
+
+	@property
+	def name(self):
+		return self._name
+
+	@property
+	def arguments(self):
+		return self._arguments
+
+	@property
+	def virtual(self):
+		return self._virtual
+
+	@property
+	def const(self):
+		return self._const
+
+	@property
+	def implemented(self):
+		return self._implemented
+
+	@property
+	def visibility(self):
+		return self._visibility
+
 def _from_visibility_to_string(visibility):
 	if visibility is PUBLIC:
 		return 'public'
@@ -139,3 +199,4 @@ tfile = scope.Tag(CppFile)
 tnamespace = scope.Tag(CppNamespace)
 tclass = scope.Tag(CppClass)
 tstruct = scope.Tag(CppStruct)
+tmethod = scope.Tag(CppMethod)

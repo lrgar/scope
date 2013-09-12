@@ -502,6 +502,115 @@ namespace {
 """
 
 		self.assertEqual(scope.Scope().serialize(template), expected)
+	
+	def test_cpp_serializer_12(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tmethod('void', 'foo')
+		]
+
+		expected = """
+void foo() {}
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
+	def test_cpp_serializer_13(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tmethod('void', 'foo', ['int a'])
+		]
+
+		expected = """
+void foo(int a) {}
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
+	def test_cpp_serializer_14(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tmethod('void', 'foo', ['int a', 'string b'])
+		]
+
+		expected = """
+void foo(int a, string b) {}
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+		
+	def test_cpp_serializer_14(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tmethod('void', 'foo', ['int a', 'string b'], implemented = False)
+		]
+
+		expected = """
+void foo(int a, string b);
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
+	def test_cpp_serializer_15(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tmethod('void', 'foo', ['int a', 'string b'], virtual = True, const = True)
+		]
+
+		expected = """
+virtual void foo(int a, string b) const {}
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
+	def test_cpp_serializer_16(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tmethod('int', 'foo') [
+				'return 42;'
+			]
+		]
+
+		expected = """
+int foo() {
+    return 42;
+}
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
+	def test_cpp_serializer_17(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tclass('A') [
+				cpp.tmethod('int', 'foo')
+			]
+		]
+
+		expected = """
+class A {
+    int foo() {}
+}; // class A
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
+	def test_cpp_serializer_18(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tclass('A') [
+				cpp.tmethod('int', 'foo', visibility = cpp.PUBLIC)
+			]
+		]
+
+		expected = """
+class A {
+public:
+    int foo() {}
+}; // class A
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
 
 if __name__ == '__main__':
 	unittest.main()
