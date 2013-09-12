@@ -141,13 +141,13 @@ class Tag:
 		return _TagImpl(self._class)(* args, ** kwargs)
 
 	def __getitem__(self, children):
-		return _TagImpl(self._class)[children]
+		return _TagImpl(self._class)()[children]
 
 	def _flatten(self):
-		return _flatten(_TagImpl(self._class))
+		return _flatten(_TagImpl(self._class)())
 
 	def _list(self):
-		return _list(_TagImpl(self._class))
+		return _list(_TagImpl(self._class)())
 
 class IndentTag(TagBase):
 	def serialize(self, context):

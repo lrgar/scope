@@ -12,7 +12,6 @@ import lang.cpp as cpp
 class MockTag(scope.TagBase):
 	def __init__(self):
 		super().__init__()
-		self._name = ''
 
 	def set_arguments(self, name = ''):
 		self._name = name
@@ -56,10 +55,11 @@ class TestBaseLibrary(unittest.TestCase):
 
 	def test_tag_handler_3(self):
 		template = mock_tag [ mock_tag, mock_tag ]
-		expected = MockTag()
+
+		expected = MockTag().set_arguments()
 		expected.children = [
-			MockTag(),
-			MockTag()
+			MockTag().set_arguments(),
+			MockTag().set_arguments()
 		]
 
 		self.assertEqual(scope.Scope().flatten(template), expected)
@@ -67,8 +67,8 @@ class TestBaseLibrary(unittest.TestCase):
 	def test_string_tag_1(self):
 		template = mock_tag [ 'abc', mock_tag ]
 
-		expected = MockTag()
-		expected.children = [ 'abc', MockTag() ]
+		expected = MockTag().set_arguments()
+		expected.children = [ 'abc', MockTag().set_arguments() ]
 
 		self.assertEqual(scope.Scope().flatten(template), expected)
 
@@ -79,7 +79,7 @@ class TestBaseLibrary(unittest.TestCase):
 			)
 		]
 
-		expected = MockTag()
+		expected = MockTag().set_arguments()
 		expected.set_arguments(name = 'parent')
 		expected.children = [
 			MockTag().set_arguments(name = 'child-1'),
