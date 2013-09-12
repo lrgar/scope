@@ -51,9 +51,10 @@ class CppNamespace(scope.TagBase):
 		return self._name
 
 class CppClass(scope.TagBase):
-	def __init__(self, unit_name = 'class'):
+	def __init__(self, unit_name = 'class', default_visibility = PRIVATE):
 		super().__init__()
 		self._unit_name = unit_name
+		self._default_visibility = default_visibility
 
 	def set_arguments(self, name, superclasses = [], visibility = DEFAULT):
 		self._name = name
@@ -70,21 +71,23 @@ class CppClass(scope.TagBase):
 
 		context.write(temp)
 
-		private_children = _filter_by_visibility(self.children, [PRIVATE, DEFAULT])
-		if len(private_children) > 0:
-			_indent_and_print_elements(context, private_children)
+		if self._default_visibility == PRIVATE:
+			self._print_children(context, PRIVATE)
+			self._print_children(context, PUBLIC, 'public:')
+		elif self._default_visibility == PUBLIC:
+			self._print_children(context, PUBLIC)
+			self._print_children(context, PRIVATE, 'private:')
 
-		public_children = _filter_by_visibility(self.children, [PUBLIC])
-		if len(public_children) > 0:
-			context.write('public:')
-			_indent_and_print_elements(context, public_children)
+		self._print_children(context, PROTECTED, 'protected:')
 
-		protected_children = _filter_by_visibility(self.children, [PROTECTED])
-		if len(protected_children) > 0:
-			context.write('protected:')
-			_indent_and_print_elements(context, protected_children)
+		context.write('}}; // {0} {1}'.format(self._unit_name, self._name))
 
-		context.write('}}; // class {0}'.format(self._name))
+	def _print_children(self, context, visibility, section_name = None):
+		selected = _filter_by_visibility(self.children, visibility, self._default_visibility)
+		if len(selected) > 0:
+			if section_name is not None:
+				context.write(section_name)
+			_indent_and_print_elements(context, selected)
 
 	@property
 	def name(self):
@@ -98,6 +101,10 @@ class CppClass(scope.TagBase):
 	def superclasses(self):
 		return self._superclasses
 
+class CppStruct(CppClass):
+	def __init__(self):
+		super().__init__('struct', PUBLIC)
+
 def _from_visibility_to_string(visibility):
 	if visibility is PUBLIC:
 		return 'public'
@@ -108,8 +115,11 @@ def _from_visibility_to_string(visibility):
 	else:
 		raise ValueError('Invalid value for visibility.')
 
-def _filter_by_visibility(children, filter):
-	return [child for child in children if child.visibility in filter]
+def _filter_by_visibility(children, visibility, default_visibility):
+	if default_visibility == visibility:
+		return [child for child in children if child.visibility in [visibility, DEFAULT]]
+	else:
+		return [child for child in children if child.visibility == visibility]
 
 def _indent_and_print_elements(context, elements):
 	context.indent()
@@ -120,3 +130,4 @@ def _indent_and_print_elements(context, elements):
 tfile = scope.Tag(CppFile)
 tnamespace = scope.Tag(CppNamespace)
 tclass = scope.Tag(CppClass)
+tstruct = scope.Tag(CppStruct)

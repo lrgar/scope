@@ -452,5 +452,43 @@ namespace B {
 		
 		self.assertEqual(scope.Scope().serialize(template), expected)
 
+	def test_cpp_serializer_9(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tstruct('Foo') [
+				cpp.tstruct('Bar')
+			]
+		]
+
+		expected = """
+struct Foo {
+    struct Bar {
+    }; // struct Bar
+}; // struct Foo
+"""
+		
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
+	def test_cpp_serializer_10(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tstruct('Foo') [
+				cpp.tstruct('Bar'),
+				cpp.tstruct('Baz', visibility = cpp.PRIVATE)
+			]
+		]
+
+		expected = """
+struct Foo {
+    struct Bar {
+    }; // struct Bar
+private:
+    struct Baz {
+    }; // struct Baz
+}; // struct Foo
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+		
 if __name__ == '__main__':
 	unittest.main()
