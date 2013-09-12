@@ -232,18 +232,15 @@ class TestTemplateSerializer(unittest.TestCase):
 				mock_tag(name = 'd')
 			],
 		]
-
-		inner_indent = scope.IndentTag()
-		inner_indent.children = [
-			MockTag().set_arguments(name = 'b'),
-			MockTag().set_arguments(name = 'c')
-		]
 										  
 		expected = MockTag()
 		expected.set_arguments(name = 'parent')
 		expected.children = [
 			MockTag().set_arguments(name = 'a'),
-			inner_indent,
+			scope.IndentTag().set_children([
+				MockTag().set_arguments(name = 'b'),
+				MockTag().set_arguments(name = 'c')
+			]),
 			MockTag().set_arguments(name = 'd')
 		]
 
@@ -272,6 +269,18 @@ class TestTemplateSerializer(unittest.TestCase):
 		expected = 'element\n'
 
 		self.assertEqual(scope.Scope().serialize(scope.Scope().flatten(template)), expected)
+		
+	def test_serialization_4(self):
+		template = mock_tag(name = 'parent') [
+			mock_tag(name = 'child-1'),
+			scope.indent [
+				mock_tag(name = 'child-2')
+			]
+		]
+
+		expected = 'parent\n    child-1\n        child-2\n'
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
 
 if __name__ == '__main__':
 	unittest.main()
