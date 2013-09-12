@@ -203,7 +203,7 @@ def for_each(elements, function):
 	return _ForEachTag(elements, function)
 
 """Indent elements in the block."""
-indent = IndentTag()
+indent = Tag(IndentTag)
 
 """Group elements. These will be appended to the parent."""
 span = _SpanTag()
