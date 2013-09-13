@@ -258,6 +258,39 @@ class CppAttribute(scope.TagBase):
 	def default_value(self):
 		return self._default_value
 
+class CppEnum(scope.TagBase):
+	def __init__(self):
+		super().__init__()
+
+	def set_arguments(self, name, values, *, visibility = PUBLIC):
+		self._name = name
+		self._values = values
+		self._visibility = visibility
+		return self
+
+	def serialize(self, context):
+		if len(self._values) > 0:
+			context.write('enum {0} {{'.format(self._name))
+			context.indent()
+			for value in self._values[:-1]: context.write('{0},'.format(value))
+			context.write('{0}'.format(self._values[-1]))
+			context.unindent()
+			context.write('};')
+		else:
+			context.write('enum {0} {{}};'.format(self._name))
+
+	@property
+	def name(self):
+		return self._name
+
+	@property
+	def values(self):
+		return self._values
+
+	@property
+	def visibility(self):
+		return self._visibility
+
 def _from_visibility_to_string(visibility):
 	if visibility is PUBLIC:
 		return 'public'
@@ -288,3 +321,4 @@ tmethod = scope.Tag(CppMethod)
 tctor = scope.Tag(CppConstructor)
 tdtor = scope.Tag(CppDestructor)
 tattribute = scope.Tag(CppAttribute)
+tenum = scope.Tag(CppEnum)

@@ -685,5 +685,33 @@ class A {
 
 		self.assertEqual(scope.Scope().serialize(template), expected)
 
+	def test_cpp_serializer_23(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tenum('A', ['B', 'C', 'D'])
+		]
+
+		expected = """
+enum A {
+    B,
+    C,
+    D
+};
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
+	def test_cpp_serializer_24(self):
+		template = cpp.tfile [
+			scope.new_line,
+			cpp.tenum('A', [])
+		]
+
+		expected = """
+enum A {};
+"""
+
+		self.assertEqual(scope.Scope().serialize(template), expected)
+
 if __name__ == '__main__':
 	unittest.main()
