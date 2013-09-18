@@ -115,11 +115,6 @@ class TagBase(object):
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
-    def set_arguments(self):
-        """Method called for defining arguments for the object. Should be
-        implemented by subclasses."""
-        pass
-
     def set_children(self, children):
         """Set the children of the object."""
         self.children = children
@@ -176,11 +171,12 @@ class NewLineTag(TagBase):
 
 class _TagImpl(object):
     def __init__(self, class_):
-        self._element = class_()
+        self._class = class_
         self._children = []
+        self._element = None
 
     def __call__(self, * args, ** kwargs):
-        self._element.set_arguments(* args, ** kwargs)
+        self._element = self._class(* args, ** kwargs)
         return self
 
     def __getitem__(self, children):

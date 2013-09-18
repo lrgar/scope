@@ -23,20 +23,14 @@ class CppFile(scope.TagBase):
     def __init__(self):
         super().__init__()
 
-    def set_arguments(self):
-        return self
-
     def serialize(self, context):
         for child in self.children:
             context.serialize(child)
 
 class CppNamespace(scope.TagBase):
-    def __init__(self):
+    def __init__(self, name = None):
         super().__init__()
-
-    def set_arguments(self, name = None):
         self._name = name
-        return self
 
     def serialize(self, context):
         if self._name is None:
@@ -58,17 +52,15 @@ class CppNamespace(scope.TagBase):
     def name(self):
         return self._name
 
-class CppClass(scope.TagBase):
-    def __init__(self, unit_name = 'class', default_visibility = PRIVATE):
+class CppClassBase(scope.TagBase):
+    def __init__(self, unit_name, default_visibility, name, superclasses,
+                 visibility):
         super().__init__()
         self._unit_name = unit_name
         self._default_visibility = default_visibility
-
-    def set_arguments(self, name, *, superclasses = [], visibility = DEFAULT):
         self._name = name
         self._visibility = visibility
         self._superclasses = superclasses
-        return self
 
     def serialize(self, context):
         temp = '{0} {1}'.format(self._unit_name, self._name)
@@ -110,17 +102,19 @@ class CppClass(scope.TagBase):
     def superclasses(self):
         return self._superclasses
 
-class CppStruct(CppClass):
-    def __init__(self):
-        super().__init__('struct', PUBLIC)
+class CppClass(CppClassBase):
+    def __init__(self, name, *, superclasses = [], visibility = DEFAULT):
+        super().__init__('class', PRIVATE, name, superclasses, visibility)
+
+class CppStruct(CppClassBase):
+    def __init__(self, name, *, superclasses = [], visibility = DEFAULT):
+        super().__init__('struct', PUBLIC, name, superclasses, visibility)
 
 class CppMethodBase(scope.TagBase):
-    def __init__(self):
+    def __init__(self, return_type, name, arguments = [], *,
+                 visibility = DEFAULT, implemented = True,
+                 virtual = False, const = False):
         super().__init__()
-
-    def set_arguments(self, return_type, name, arguments = [], *,
-                      visibility = DEFAULT, implemented = True,
-                      virtual = False, const = False):
         self._return_type = return_type
         self._name = name
         self._visibility = visibility
@@ -128,7 +122,6 @@ class CppMethodBase(scope.TagBase):
         self._arguments = arguments
         self._implemented = implemented
         self._const = const
-        return self
 
     def serialize(self, context):
         temp = ''
@@ -178,13 +171,10 @@ class CppMethodBase(scope.TagBase):
         return self._visibility
 
 class CppMethod(CppMethodBase):
-    def __init__(self):
-        super().__init__()
-
-    def set_arguments(self, return_type, name, arguments = [], *,
-                      visibility = DEFAULT, implemented = True,
-                      virtual = False, const = False):
-        return super().set_arguments(
+    def __init__(self, return_type, name, arguments = [], *,
+                 visibility = DEFAULT, implemented = True,
+                 virtual = False, const = False):
+        super().__init__(
             return_type, name, arguments,
             visibility = visibility,
             implemented = implemented,
@@ -193,24 +183,18 @@ class CppMethod(CppMethodBase):
         )
 
 class CppConstructor(CppMethodBase):
-    def __init__(self):
-        super().__init__()
-
-    def set_arguments(self, name, arguments = [], *, visibility = DEFAULT,
-                      implemented = True):
-        return super().set_arguments(
+    def __init__(self, name, arguments = [], *, visibility = DEFAULT,
+                 implemented = True):
+        super().__init__(
             None, name, arguments,
             visibility = visibility,
             implemented = implemented
         )
 
 class CppDestructor(CppMethodBase):
-    def __init__(self):
-        super().__init__()
-
-    def set_arguments(self, name, *, visibility = DEFAULT, implemented = True,
-                      virtual = False):
-        return super().set_arguments(
+    def __init__(self, name, *, visibility = DEFAULT, implemented = True,
+                 virtual = False):
+        super().__init__(
             None, name, [],
             visibility = visibility,
             implemented = implemented,
@@ -218,18 +202,15 @@ class CppDestructor(CppMethodBase):
         )
 
 class CppAttribute(scope.TagBase):
-    def __init__(self):
+    def __init__(self, type, name, *, visibility = DEFAULT, static = False,
+                 const = False, default_value = None):
         super().__init__()
-
-    def set_arguments(self, type, name, *, visibility = DEFAULT,
-                      static = False, const = False, default_value = None):
         self._type = type
         self._name = name
         self._visibility = visibility
         self._static = static
         self._const = const
         self._default_value = default_value
-        return self
 
     def serialize(self, context):
         line = ''
@@ -269,14 +250,11 @@ class CppAttribute(scope.TagBase):
         return self._default_value
 
 class CppEnum(scope.TagBase):
-    def __init__(self):
+    def __init__(self, name, values, *, visibility = PUBLIC):
         super().__init__()
-
-    def set_arguments(self, name, values, *, visibility = PUBLIC):
         self._name = name
         self._values = values
         self._visibility = visibility
-        return self
 
     def serialize(self, context):
         if len(self._values) > 0:
