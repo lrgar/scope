@@ -5,6 +5,8 @@
 # This source file is subject to terms of the MIT License. (See file LICENSE)
 #
 
+# pylint: disable=C0111
+
 import unittest
 import scope
 import lang.cpp as cpp
@@ -25,9 +27,9 @@ class MockTag(scope.TagBase):
     def name(self):
         return self._name
 
-mock_tag = scope.Tag(MockTag)
+mock_tag = scope.Tag(MockTag) #pylint: disable-msg=C0103
 
-class TestBaseLibrary(unittest.TestCase):
+class TestBaseLibrary(unittest.TestCase): #pylint: disable-msg=R0904
     def test_tag_handler_1(self):
         template = mock_tag(name='element')
 
@@ -85,14 +87,16 @@ class TestBaseLibrary(unittest.TestCase):
         self.assertEqual(scope.Scope().flatten(template), expected)
 
     def test_tag_for_each_2(self):
-        def gen2(n, m):
-            return mock_tag(name='child-{0}'.format(n * 3 + m + 1))
-
-        def gen(n):
-            return scope.for_each(range(0, 3), function = lambda m: gen2(n, m))
+        def gen(i):
+            return scope.for_each(
+                range(0, 3),
+                function=lambda j: mock_tag(
+                    name='child-{0}'.format(i * 3 + j + 1)
+                )
+            )
 
         template = mock_tag(name='parent') [
-            scope.for_each(range(0, 2), function = gen)
+            scope.for_each(range(0, 2), function=gen)
         ]
 
         expected = MockTag(name='parent')
@@ -323,7 +327,7 @@ class TestBaseLibrary(unittest.TestCase):
 
         self.assertEqual(scope.Scope().serialize(template, options), expected)
 
-class TestCppSerializer(unittest.TestCase):
+class TestCppSerializer(unittest.TestCase): #pylint: disable-msg=R0904
     def test_cpp_serializer_1(self):
         template = cpp.tfile [
             '#include <string>'
@@ -533,19 +537,6 @@ void foo(int a, string b) {}
 
         self.assertEqual(scope.Scope().serialize(template), expected)
 
-    def test_cpp_serializer_14(self):
-        template = cpp.tfile [
-            scope.new_line,
-            cpp.tmethod('void', 'foo', ['int a', 'string b'],
-                        implemented = False)
-        ]
-
-        expected = """
-void foo(int a, string b);
-"""
-
-        self.assertEqual(scope.Scope().serialize(template), expected)
-
     def test_cpp_serializer_15(self):
         template = cpp.tfile [
             scope.new_line,
@@ -705,6 +696,19 @@ enum A {
 
         expected = """
 enum A {};
+"""
+
+        self.assertEqual(scope.Scope().serialize(template), expected)
+
+    def test_cpp_serializer_25(self):
+        template = cpp.tfile [
+            scope.new_line,
+            cpp.tmethod('void', 'foo', ['int a', 'string b'],
+                        implemented = False)
+        ]
+
+        expected = """
+void foo(int a, string b);
 """
 
         self.assertEqual(scope.Scope().serialize(template), expected)
