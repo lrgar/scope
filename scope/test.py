@@ -330,6 +330,23 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
 
         self.assertEqual(scope.serialize(template, options), expected)
 
+    def test_serialization_8(self):
+        template = 'string'
+        expected = 'string\n'
+
+        self.assertEqual(scope.serialize(template), expected)
+
+    def test_serialization_9(self):
+        template = 42
+        expected = '42\n'
+
+        self.assertEqual(scope.serialize(template), expected)
+
+    def test_serialization_10(self):
+        template = mock_tag(name='parent')[42]
+        expected = 'parent\n    42\n'
+
+        self.assertEqual(scope.serialize(template), expected)
 
 class TestCppSerializer(unittest.TestCase):  # pylint: disable-msg=R0904
     def test_cpp_serializer_1(self):

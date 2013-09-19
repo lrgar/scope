@@ -70,10 +70,10 @@ class SerializerContext(object):
 
     def serialize(self, tag):
         """Serialize tag and print it to the output."""
-        if isinstance(tag, str):
-            self.write(tag)
-        else:
+        try:
             tag.serialize(self)
+        except (AttributeError, TypeError):
+            self.write(str(tag))
 
     @property
     def indentation(self):
@@ -137,13 +137,9 @@ class Tag(object):
     def __getitem__(self, children):
         return _TagImpl(self._class).set_arguments()[children]
 
-    def _flatten(self):
+    def flatten(self):
         """Creates a 'flat' representation of itself."""
-        return _flatten(_TagImpl(self._class).set_arguments())
-
-    def _list(self):
-        """Returns a list of items 'flat' representation of itself."""
-        return _list(_TagImpl(self._class).set_arguments())
+        return _TagImpl(self._class).set_arguments().flatten()
 
 
 class IndentTag(TagBase):
@@ -187,25 +183,18 @@ class _TagImpl(object):
         """Proxy object to manage a tag before it becomes flattened."""
         return _flatten(self).serialize(context)
 
-    def _list(self):
-        return [self]
-
-    def _flatten(self):
-        source = itertools.chain(* list(_list(t) for t in self._children))
-        items = [_flatten(e) for e in source]
-        if len(items) > 0:
-            self._element.children = items
-        return self._element
+    def flatten(self):
+        self._element.children = list(itertools.chain(* map(_flatten, self._children)))
+        return [self._element]
 
 
 class _ForEachTag(object):
-    def __init__(self, enumerable, function):
-        self._enumerable = enumerable
+    def __init__(self, iterable, function):
+        self._iterable = iterable
         self._function = function
 
-    def _list(self):
-        return itertools.chain(
-            * list(_list(self._function(e)) for e in self._enumerable))
+    def flatten(self):
+        return list(itertools.chain(* map(_flatten, map(self._function, self._iterable))))
 
 
 class _SpanTagImpl(object):
@@ -219,33 +208,16 @@ class _SpanTagImpl(object):
             self._children = [children]
         return self
 
-    def _list(self):
-        return itertools.chain(* list(_list(e) for e in self._children))
+    def flatten(self):
+        return list(itertools.chain(* map(_flatten, self._children)))
 
 
 class _SpanTag(object):
-    def __init__(self):
-        self._children = []
-
     def __getitem__(self, children):
         return _SpanTagImpl()[children]
 
-    def _list(self):
-        return _SpanTagImpl()._list()
-
-
-def _flatten(value):
-    if isinstance(value, str):
-        return value
-    else:
-        return value._flatten()
-
-
-def _list(value):
-    if isinstance(value, str):
-        return [value]
-    else:
-        return value._list()
+    def flatten(self):
+        return _SpanTagImpl().flatten()
 
 
 def for_each(elements, function):
@@ -266,11 +238,18 @@ def serialize(template, options=SerializerOptions()):
     """Serialize the provided template according to the language
     specifications."""
     context = SerializerContext(options)
-    template.serialize(context)
+    context.serialize(flatten(template))
     return context.output
 
 
 def flatten(template):
-    """Creates a 'flat' version of the template. It process special s to
+    """Creates a 'flat' version of the template. It process special tags to
     create a simple structure for the template."""
-    return _flatten(template)
+    return _flatten(template)[0]
+
+
+def _flatten(value):
+    try:
+        return value.flatten()
+    except (AttributeError, TypeError):
+        return [value]
