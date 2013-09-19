@@ -63,4 +63,5 @@ This project is under the [MIT License](LICENSE.md).
 
 ## Changelog
 
+- 0.1.1 - just update so PyPI recognize the different README.
 - 0.1.0 - first release.

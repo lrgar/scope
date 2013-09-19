@@ -10,13 +10,13 @@
 from distutils.core import setup
 
 NAME = 'scope'
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 DESCRIPTION = 'Template library for multi-language code generation'
 AUTHOR = 'Luis Garcia'
 AUTHOR_EMAIL = 'lgarcia@codespot.in'
 URL = 'https://github.com/lrgar/scope'
 CLASSIFIERS = [
-    'Development Status :: 4 - Beta',
+    'Development Status :: 5 - Production/Stable',
     'Intended Audience :: Developers',
     'License :: OSI Approved :: MIT License',
     'Operating System :: OS Independent',
