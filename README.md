@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/lrgar/scope.png?branch=master)](https://travis-ci.org/lrgar/scope)
 
-Scope is a library for creating code templates with pure Python code. Its goal is to allow to define a simple and clear structure for code templates, by offering a basic set of utilities that can be extended for providing language-specific constructs.
+Scope is a library for creating code templates with pure Python code. Its goal is to allow defining a simple and clear structure for code templates, by offering a basic set of utilities that can be extended for providing language-specific constructs. It basically offers an [internal DSL][dsl] for defining and serializing templates in Python.
 
 For this first release, it's provided a basic set for generating C++ code, but I will be extending to support more languages over time.
 
@@ -10,6 +10,7 @@ Scope is based in [Brevé][breve], a similar tool for generating HTML, and I cre
 
 [spgen]: https://github.com/lrgar/spgen
 [breve]: http://breve.twisty-industries.com/
+[dsl]: http://martinfowler.com/bliki/DomainSpecificLanguage.html
 
 ## Example
 
@@ -36,7 +37,11 @@ You can define a simple template as the following code,
 
 With the template you can just serialize it into a string with `scope.serialize(template)` and then print it or save it as a file. 
 
-## Instalation
+## Requirements
+
+It requires Python 2.6+ or 3.2+
+
+## Installation
 
 You can use `pip`,
 
@@ -48,11 +53,9 @@ Or if you downloaded the source code then just call,
 
 ## Resources
 
-- Go to the [Getting started][getting-started] page to see a simple guide of how you can use the library.
-- After that, you can see the specifications for creating C++ code in the [C++ page][cpp-templates]
+Go to the [Getting started][getting-started] page to see a simple guide of how you can use the library.
 
 [getting-started]: https://github.com/lrgar/scope/wiki/Getting-started
-[cpp-templates]: https://github.com/lrgar/scope/wiki/Cpp-templates
 
 ## License
 
