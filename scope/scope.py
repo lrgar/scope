@@ -137,9 +137,12 @@ class Tag(object):
     def __getitem__(self, children):
         return _TagImpl(self._class).set_arguments()[children]
 
-    def flatten(self):
+    def __len__(self):
+        raise RuntimeError('Should not be used.')
+
+    def _flatten(self):
         """Creates a 'flat' representation of itself."""
-        return _TagImpl(self._class).set_arguments().flatten()
+        return _TagImpl(self._class).set_arguments()._flatten()
 
 
 class IndentTag(TagBase):
@@ -179,45 +182,56 @@ class _TagImpl(object):
             self._children = [children]
         return self
 
-    def serialize(self, context):
-        """Proxy object to manage a tag before it becomes flattened."""
-        return _flatten(self).serialize(context)
+    def __len__(self):
+        raise RuntimeError('Should not be used.')
 
-    def flatten(self):
-        self._element.children = list(itertools.chain(* map(_flatten, self._children)))
+    def _flatten(self):
+        itrs = (_flatten(t) for t in self._children)
+        self._element.children = list(itertools.chain.from_iterable(itrs))
         return [self._element]
 
 
 class _ForEachTag(object):
+    """Helper tag class for representing the for_each function."""
+
     def __init__(self, iterable, function):
         self._iterable = iterable
         self._function = function
 
-    def flatten(self):
-        return list(itertools.chain(* map(_flatten, map(self._function, self._iterable))))
+    def _flatten(self):
+        iterables = (_flatten(self._function(t)) for t in self._iterable)
+        return list(itertools.chain.from_iterable(iterables))
 
 
 class _SpanTagImpl(object):
+    """Represents a span block."""
+
     def __init__(self):
         self._children = []
 
-    def __getitem__(self, children):
+    def set_children(self, children):
+        """Set children of the span block."""
         if isinstance(children, tuple):
             self._children = list(children)
         else:
             self._children = [children]
         return self
 
-    def flatten(self):
-        return list(itertools.chain(* map(_flatten, self._children)))
+    def _flatten(self):
+        iterables = (_flatten(t) for t in self._children)
+        return list(itertools.chain.from_iterable(iterables))
 
 
 class _SpanTag(object):
+    """Helper tag class for representing the span block."""
     def __getitem__(self, children):
-        return _SpanTagImpl()[children]
+        return _SpanTagImpl().set_children(children)
 
-    def flatten(self):
-        return _SpanTagImpl().flatten()
+    def __len__(self):
+        raise RuntimeError('Should not be used.')
+
+    def _flatten(self):
+        return _SpanTagImpl()._flatten()
 
 
 def for_each(elements, function):
@@ -250,6 +264,6 @@ def flatten(template):
 
 def _flatten(value):
     try:
-        return value.flatten()
+        return value._flatten()
     except (AttributeError, TypeError):
         return [value]
