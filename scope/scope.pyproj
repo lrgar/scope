@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7d273b72-19d4-4508-b702-45711d279d19}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>test.py</StartupFile>
+    <StartupFile>test_scope.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -17,9 +17,11 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
     <Compile Include="lang\cpp.py" />
+    <Compile Include="lang\test_cpp.py" />
     <Compile Include="lang\__init__.py" />
     <Compile Include="scope.py" />
-    <Compile Include="test.py" />
+    <Compile Include="test_scope.py" />
+    <Compile Include="__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="lang\" />
