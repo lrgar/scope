@@ -21,9 +21,6 @@ DEFAULT = SingletonObject('default')
 
 
 class CppFile(scope.TagBase):
-    def __init__(self):
-        super().__init__()
-
     def serialize(self, context):
         for child in self.children:
             context.serialize(child)
@@ -31,7 +28,7 @@ class CppFile(scope.TagBase):
 
 class CppNamespace(scope.TagBase):
     def __init__(self, name = None):
-        super().__init__()
+        super(CppNamespace, self).__init__()
         self._name = name
 
     def serialize(self, context):
@@ -58,7 +55,7 @@ class CppNamespace(scope.TagBase):
 class CppClassBase(scope.TagBase):
     def __init__(self, unit_name, default_visibility, name, superclasses,
                  visibility):
-        super().__init__()
+        super(CppClassBase, self).__init__()
         self._unit_name = unit_name
         self._default_visibility = default_visibility
         self._name = name
@@ -107,20 +104,22 @@ class CppClassBase(scope.TagBase):
 
 
 class CppClass(CppClassBase):
-    def __init__(self, name, *, superclasses = [], visibility = DEFAULT):
-        super().__init__('class', PRIVATE, name, superclasses, visibility)
+    def __init__(self, name, superclasses = [], visibility = DEFAULT):
+        super(CppClass, self).__init__('class', PRIVATE, name, superclasses,
+                                       visibility)
 
 
 class CppStruct(CppClassBase):
-    def __init__(self, name, *, superclasses = [], visibility = DEFAULT):
-        super().__init__('struct', PUBLIC, name, superclasses, visibility)
+    def __init__(self, name, superclasses = [], visibility = DEFAULT):
+        super(CppStruct, self).__init__('struct', PUBLIC, name, superclasses,
+                                        visibility)
 
 
 class CppMethodBase(scope.TagBase):
-    def __init__(self, return_type, name, arguments = [], *,
+    def __init__(self, return_type, name, arguments = [],
                  visibility = DEFAULT, implemented = True,
                  virtual = False, const = False):
-        super().__init__()
+        super(CppMethodBase, self).__init__()
         self._return_type = return_type
         self._name = name
         self._visibility = visibility
@@ -178,10 +177,10 @@ class CppMethodBase(scope.TagBase):
 
 
 class CppMethod(CppMethodBase):
-    def __init__(self, return_type, name, arguments = [], *,
+    def __init__(self, return_type, name, arguments = [],
                  visibility = DEFAULT, implemented = True,
                  virtual = False, const = False):
-        super().__init__(
+        super(CppMethod, self).__init__(
             return_type, name, arguments,
             visibility = visibility,
             implemented = implemented,
@@ -191,9 +190,9 @@ class CppMethod(CppMethodBase):
 
 
 class CppConstructor(CppMethodBase):
-    def __init__(self, name, arguments = [], *, visibility = DEFAULT,
+    def __init__(self, name, arguments = [], visibility = DEFAULT,
                  implemented = True):
-        super().__init__(
+        super(CppConstructor, self).__init__(
             None, name, arguments,
             visibility = visibility,
             implemented = implemented
@@ -201,9 +200,9 @@ class CppConstructor(CppMethodBase):
 
 
 class CppDestructor(CppMethodBase):
-    def __init__(self, name, *, visibility = DEFAULT, implemented = True,
+    def __init__(self, name, visibility = DEFAULT, implemented = True,
                  virtual = False):
-        super().__init__(
+        super(CppDestructor, self).__init__(
             None, name, [],
             visibility = visibility,
             implemented = implemented,
@@ -212,9 +211,9 @@ class CppDestructor(CppMethodBase):
 
 
 class CppAttribute(scope.TagBase):
-    def __init__(self, type, name, *, visibility = DEFAULT, static = False,
+    def __init__(self, type, name, visibility = DEFAULT, static = False,
                  const = False, default_value = None):
-        super().__init__()
+        super(CppAttribute, self).__init__()
         self._type = type
         self._name = name
         self._visibility = visibility
@@ -261,8 +260,8 @@ class CppAttribute(scope.TagBase):
 
 
 class CppEnum(scope.TagBase):
-    def __init__(self, name, values, *, visibility = PUBLIC):
-        super().__init__()
+    def __init__(self, name, values, visibility = PUBLIC):
+        super(CppEnum, self).__init__()
         self._name = name
         self._values = values
         self._visibility = visibility

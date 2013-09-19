@@ -5,4 +5,4 @@
 # This source file is subject to terms of the MIT License. (See file LICENSE)
 #
 
-from scope.scope import *
+from .scope import *

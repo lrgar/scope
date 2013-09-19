@@ -8,8 +8,8 @@
 # pylint: disable=C0111
 
 import unittest
-import scope
-import scope.lang.cpp as cpp
+from .. import scope
+from . import cpp
 
 
 class TestCppSerializer(unittest.TestCase):  # pylint: disable-msg=R0904

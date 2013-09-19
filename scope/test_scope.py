@@ -8,13 +8,11 @@
 # pylint: disable=C0111
 
 import unittest
-import scope
-import scope.lang.cpp as cpp
-
+from . import scope
 
 class MockTag(scope.TagBase):
     def __init__(self, name=''):
-        super().__init__()
+        super(MockTag, self).__init__()
         self._name = name
 
     def serialize(self, context):
