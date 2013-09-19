@@ -22,6 +22,8 @@ CLASSIFIERS = [
     'Operating System :: OS Independent',
     'Programming Language :: C++',
     'Programming Language :: Python',
+    'Programming Language :: Python :: 2',
+    'Programming Language :: Python :: 3',
     'Topic :: Software Development :: Code Generators',
     'Topic :: Software Development :: Libraries'
 ]
