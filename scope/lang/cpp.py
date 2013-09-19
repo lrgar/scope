@@ -19,6 +19,7 @@ PRIVATE = SingletonObject('private')
 PROTECTED = SingletonObject('protected')
 DEFAULT = SingletonObject('default')
 
+
 class CppFile(scope.TagBase):
     def __init__(self):
         super().__init__()
@@ -26,6 +27,7 @@ class CppFile(scope.TagBase):
     def serialize(self, context):
         for child in self.children:
             context.serialize(child)
+
 
 class CppNamespace(scope.TagBase):
     def __init__(self, name = None):
@@ -51,6 +53,7 @@ class CppNamespace(scope.TagBase):
     @property
     def name(self):
         return self._name
+
 
 class CppClassBase(scope.TagBase):
     def __init__(self, unit_name, default_visibility, name, superclasses,
@@ -102,13 +105,16 @@ class CppClassBase(scope.TagBase):
     def superclasses(self):
         return self._superclasses
 
+
 class CppClass(CppClassBase):
     def __init__(self, name, *, superclasses = [], visibility = DEFAULT):
         super().__init__('class', PRIVATE, name, superclasses, visibility)
 
+
 class CppStruct(CppClassBase):
     def __init__(self, name, *, superclasses = [], visibility = DEFAULT):
         super().__init__('struct', PUBLIC, name, superclasses, visibility)
+
 
 class CppMethodBase(scope.TagBase):
     def __init__(self, return_type, name, arguments = [], *,
@@ -170,6 +176,7 @@ class CppMethodBase(scope.TagBase):
     def visibility(self):
         return self._visibility
 
+
 class CppMethod(CppMethodBase):
     def __init__(self, return_type, name, arguments = [], *,
                  visibility = DEFAULT, implemented = True,
@@ -182,6 +189,7 @@ class CppMethod(CppMethodBase):
             const = const
         )
 
+
 class CppConstructor(CppMethodBase):
     def __init__(self, name, arguments = [], *, visibility = DEFAULT,
                  implemented = True):
@@ -190,6 +198,7 @@ class CppConstructor(CppMethodBase):
             visibility = visibility,
             implemented = implemented
         )
+
 
 class CppDestructor(CppMethodBase):
     def __init__(self, name, *, visibility = DEFAULT, implemented = True,
@@ -200,6 +209,7 @@ class CppDestructor(CppMethodBase):
             implemented = implemented,
             virtual = virtual
         )
+
 
 class CppAttribute(scope.TagBase):
     def __init__(self, type, name, *, visibility = DEFAULT, static = False,
@@ -249,6 +259,7 @@ class CppAttribute(scope.TagBase):
     def default_value(self):
         return self._default_value
 
+
 class CppEnum(scope.TagBase):
     def __init__(self, name, values, *, visibility = PUBLIC):
         super().__init__()
@@ -280,6 +291,7 @@ class CppEnum(scope.TagBase):
     def visibility(self):
         return self._visibility
 
+
 def _from_visibility_to_string(visibility):
     if visibility is PUBLIC:
         return 'public'
@@ -289,6 +301,7 @@ def _from_visibility_to_string(visibility):
         return 'protected'
     else:
         raise ValueError('Invalid value for visibility.')
+
 
 def _filter_by_visibility(children, visibility, default_visibility):
     if default_visibility == visibility:
@@ -300,11 +313,13 @@ def _filter_by_visibility(children, visibility, default_visibility):
                 for child in children
                 if child.visibility == visibility]
 
+
 def _indent_and_print_elements(context, elements):
     context.indent()
     for child in elements:
         context.serialize(child)
     context.unindent()
+
 
 tfile = scope.Tag(CppFile)
 tnamespace = scope.Tag(CppNamespace)
