@@ -11,7 +11,7 @@ from distutils.core import setup
 
 NAME = 'scope'
 VERSION = '0.1.1'
-DESCRIPTION = 'Template library for multi-language code generation'
+DESCRIPTION = 'Python library for creating code templates'
 AUTHOR = 'Luis Garcia'
 AUTHOR_EMAIL = 'lgarcia@codespot.in'
 URL = 'https://github.com/lrgar/scope'
@@ -23,7 +23,13 @@ CLASSIFIERS = [
     'Programming Language :: C++',
     'Programming Language :: Python',
     'Programming Language :: Python :: 2',
+    'Programming Language :: Python :: 2.6',
+    'Programming Language :: Python :: 2.7',
     'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.0',
+    'Programming Language :: Python :: 3.1',
+    'Programming Language :: Python :: 3.2',
+    'Programming Language :: Python :: 3.3',
     'Topic :: Software Development :: Code Generators',
     'Topic :: Software Development :: Libraries'
 ]
