@@ -9,7 +9,7 @@
 
 import unittest
 import scope
-import lang.cpp as cpp
+import scope.lang.cpp as cpp
 
 
 class MockTag(scope.TagBase):
