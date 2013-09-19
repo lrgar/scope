@@ -37,7 +37,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
 
         expected = MockTag(name='element')
 
-        self.assertEqual(scope.Scope().flatten(template), expected)
+        self.assertEqual(scope.flatten(template), expected)
 
     def test_tag_handler_2(self):
         template = mock_tag(name='parent')[
@@ -51,7 +51,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
             MockTag(name='child-2')
         ]
 
-        self.assertEqual(scope.Scope().flatten(template), expected)
+        self.assertEqual(scope.flatten(template), expected)
 
     def test_tag_handler_3(self):
         template = mock_tag[mock_tag, mock_tag]
@@ -62,7 +62,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
             MockTag()
         ]
 
-        self.assertEqual(scope.Scope().flatten(template), expected)
+        self.assertEqual(scope.flatten(template), expected)
 
     def test_string_tag_1(self):
         template = mock_tag['abc', mock_tag]
@@ -70,7 +70,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         expected = MockTag()
         expected.children = ['abc', MockTag()]
 
-        self.assertEqual(scope.Scope().flatten(template), expected)
+        self.assertEqual(scope.flatten(template), expected)
 
     def test_tag_for_each_1(self):
         template = mock_tag(name='parent')[
@@ -87,7 +87,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
             MockTag(name='child-3')
         ]
 
-        self.assertEqual(scope.Scope().flatten(template), expected)
+        self.assertEqual(scope.flatten(template), expected)
 
     def test_tag_for_each_2(self):
         def gen(i):
@@ -112,7 +112,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
             MockTag(name='child-6')
         ]
 
-        self.assertEqual(scope.Scope().flatten(template), expected)
+        self.assertEqual(scope.flatten(template), expected)
 
     def test_tag_for_each_3(self):
         template = mock_tag(name='parent')[
@@ -122,7 +122,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         expected = MockTag(name='parent')
         expected.children = []
 
-        self.assertEqual(scope.Scope().flatten(template), expected)
+        self.assertEqual(scope.flatten(template), expected)
 
     def test_tag_span_1(self):
         template = mock_tag(name='parent')[
@@ -138,7 +138,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
             MockTag(name='b')
         ]
 
-        self.assertEqual(scope.Scope().flatten(template), expected)
+        self.assertEqual(scope.flatten(template), expected)
 
     def test_tag_span_2(self):
         template = mock_tag(name='parent')[
@@ -160,7 +160,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
             MockTag(name='d')
         ]
 
-        self.assertEqual(scope.Scope().flatten(template), expected)
+        self.assertEqual(scope.flatten(template), expected)
 
     def test_tag_span_3(self):
         template = mock_tag(name='parent')[
@@ -182,7 +182,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
             MockTag(name='d')
         ]
 
-        self.assertEqual(scope.Scope().flatten(template), expected)
+        self.assertEqual(scope.flatten(template), expected)
 
     def test_tag_span_4(self):
         template = mock_tag(name='parent')[
@@ -203,7 +203,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
             MockTag(name='b')
         ]
 
-        self.assertEqual(scope.Scope().flatten(template), expected)
+        self.assertEqual(scope.flatten(template), expected)
 
     def test_tag_span_5(self):
         template = mock_tag(name='parent')[
@@ -213,7 +213,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         expected = MockTag(name='parent')
         expected.children = []
 
-        self.assertEqual(scope.Scope().flatten(template), expected)
+        self.assertEqual(scope.flatten(template), expected)
 
     def test_tag_span_6(self):
         template = mock_tag(name='parent')[
@@ -225,7 +225,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         expected = MockTag(name='parent')
         expected.children = []
 
-        self.assertEqual(scope.Scope().flatten(template), expected)
+        self.assertEqual(scope.flatten(template), expected)
 
     def test_tag_indent_3(self):
         template = mock_tag(name='parent')[
@@ -249,14 +249,14 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
             MockTag(name='d')
         ]
 
-        self.assertEqual(scope.Scope().flatten(template), expected)
+        self.assertEqual(scope.flatten(template), expected)
 
     def test_serialization_1(self):
         template = mock_tag(name='element')
 
         expected = 'element\n'
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_serialization_2(self):
         template = mock_tag(name='parent')[
@@ -266,15 +266,14 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
 
         expected = 'parent\n    child-1\n    child-2\n'
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_serialization_3(self):
         template = mock_tag(name='element')
 
         expected = 'element\n'
 
-        self.assertEqual(
-            scope.Scope().serialize(scope.Scope().flatten(template)), expected)
+        self.assertEqual(scope.serialize(scope.flatten(template)), expected)
 
     def test_serialization_4(self):
         template = mock_tag(name='parent')[
@@ -286,7 +285,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
 
         expected = 'parent\n    child-1\n        child-2\n'
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_serialization_5(self):
         template = mock_tag(name='parent')[
@@ -299,7 +298,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
 
         expected = 'parent\n    child-1\n    \n        str:child-2\n'
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_serialization_6(self):
         template = mock_tag(name='parent')[
@@ -312,7 +311,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
 
         expected = 'parent\n    child-1\n\n        str:child-2\n'
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_serialization_7(self):
         options = scope.SerializerOptions()
@@ -329,7 +328,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
 
         expected = 'parent\n\tchild-1\n\n\t\tstr:child-2\n'
 
-        self.assertEqual(scope.Scope().serialize(template, options), expected)
+        self.assertEqual(scope.serialize(template, options), expected)
 
 
 class TestCppSerializer(unittest.TestCase):  # pylint: disable-msg=R0904
@@ -340,7 +339,7 @@ class TestCppSerializer(unittest.TestCase):  # pylint: disable-msg=R0904
 
         expected = """#include <string>\n"""
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_2(self):
         template = cpp.tfile[
@@ -349,7 +348,7 @@ class TestCppSerializer(unittest.TestCase):  # pylint: disable-msg=R0904
 
         expected = """class Foo {\n}; // class Foo\n"""
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_3(self):
         template = cpp.tfile[
@@ -363,7 +362,7 @@ class TestCppSerializer(unittest.TestCase):  # pylint: disable-msg=R0904
 }; // class Foo
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_4(self):
         template = cpp.tfile[
@@ -380,7 +379,7 @@ class Foo {
 }; // class Foo
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_5(self):
         template = cpp.tfile[
@@ -401,7 +400,7 @@ public:
 }; // class Foo
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_6(self):
         template = cpp.tfile[
@@ -417,7 +416,7 @@ class Bar {
 }; // class Bar
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_7(self):
         template = cpp.tfile[
@@ -437,7 +436,7 @@ namespace Baz {
 } // namespace Baz
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_8(self):
         template = cpp.tfile[
@@ -453,7 +452,7 @@ namespace B {
 } // namespace B
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_9(self):
         template = cpp.tfile[
@@ -470,7 +469,7 @@ struct Foo {
 }; // struct Foo
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_10(self):
         template = cpp.tfile[
@@ -491,7 +490,7 @@ private:
 }; // struct Foo
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_11(self):
         template = cpp.tfile[
@@ -504,7 +503,7 @@ namespace {
 } // namespace
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_12(self):
         template = cpp.tfile[
@@ -516,7 +515,7 @@ namespace {
 void foo() {}
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_13(self):
         template = cpp.tfile[
@@ -528,7 +527,7 @@ void foo() {}
 void foo(int a) {}
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_14(self):
         template = cpp.tfile[
@@ -540,7 +539,7 @@ void foo(int a) {}
 void foo(int a, string b) {}
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_15(self):
         template = cpp.tfile[
@@ -553,7 +552,7 @@ void foo(int a, string b) {}
 virtual void foo(int a, string b) const {}
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_16(self):
         template = cpp.tfile[
@@ -569,7 +568,7 @@ int foo() {
 }
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_17(self):
         template = cpp.tfile[
@@ -585,7 +584,7 @@ class A {
 }; // class A
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_18(self):
         template = cpp.tfile[
@@ -602,7 +601,7 @@ public:
 }; // class A
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_19(self):
         template = cpp.tfile[
@@ -618,7 +617,7 @@ class A {
 }; // class A
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_20(self):
         template = cpp.tfile[
@@ -636,7 +635,7 @@ public:
 }; // class A
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_21(self):
         template = cpp.tfile[
@@ -659,7 +658,7 @@ public:
 }; // class A
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_22(self):
         template = cpp.tfile[
@@ -675,7 +674,7 @@ class A {
 }; // class A
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_23(self):
         template = cpp.tfile[
@@ -691,7 +690,7 @@ enum A {
 };
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_24(self):
         template = cpp.tfile[
@@ -703,7 +702,7 @@ enum A {
 enum A {};
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
     def test_cpp_serializer_25(self):
         template = cpp.tfile[
@@ -716,7 +715,7 @@ enum A {};
 void foo(int a, string b);
 """
 
-        self.assertEqual(scope.Scope().serialize(template), expected)
+        self.assertEqual(scope.serialize(template), expected)
 
 if __name__ == '__main__':
     unittest.main()

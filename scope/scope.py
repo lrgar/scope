@@ -5,9 +5,10 @@
 # This source file is subject to terms of the MIT License. (See file LICENSE)
 #
 
-"""Library for code templates serialization."""
+"""Library for code template serialization."""
 
 import itertools
+
 
 class SerializerOptions(object):
     """Provides additional options for the serialization."""
@@ -41,20 +42,6 @@ class SerializerOptions(object):
         """Set the factor of characters used for indentation"""
         self._indentation_factor = value
 
-class Scope(object):
-    """Offer utilities to work with scope-based code templates."""
-
-    def serialize(self, template, options = SerializerOptions()):
-        """Serialize the provided template according to the language
-        specifications."""
-        context = SerializerContext(options)
-        template.serialize(context)
-        return context.output
-
-    def flatten(self, template):
-        """Creates a 'flat' version of the template. It process special s to
-        create a simple structure for the template."""
-        return _flatten(template)
 
 class SerializerContext(object):
     """Context object for the output generator."""
@@ -103,6 +90,7 @@ class SerializerContext(object):
         """Options for the serializer."""
         return self._options
 
+
 class TagBase(object):
     """Base class for scope-based template tags."""
 
@@ -136,6 +124,7 @@ class TagBase(object):
         self._children = children
         return self
 
+
 class Tag(object):
     """Handler for tag implementations."""
 
@@ -143,39 +132,47 @@ class Tag(object):
         self._class = class_
 
     def __call__(self, * args, ** kwargs):
-        return _TagImpl(self._class)(* args, ** kwargs)
+        return _TagImpl(self._class).set_arguments(* args, ** kwargs)
 
     def __getitem__(self, children):
-        return _TagImpl(self._class)()[children]
+        return _TagImpl(self._class).set_arguments()[children]
 
     def _flatten(self):
-        return _flatten(_TagImpl(self._class)())
+        """Creates a 'flat' representation of itself."""
+        return _flatten(_TagImpl(self._class).set_arguments())
 
     def _list(self):
-        return _list(_TagImpl(self._class)())
+        """Returns a list of items 'flat' representation of itself."""
+        return _list(_TagImpl(self._class).set_arguments())
+
 
 class IndentTag(TagBase):
+    """Represents an indent tag, the children will be printed with increased
+    indentation."""
+
     def serialize(self, context):
         context.indent()
         for child in self.children:
             context.serialize(child)
         context.unindent()
 
+
 class NewLineTag(TagBase):
+    """Represents a blank line tag."""
+
     def serialize(self, context):
         context.new_line()
 
-#
-# Implementation-detail
-#
 
 class _TagImpl(object):
+    """Proxy object to manage a tag before it becomes flattened."""
+
     def __init__(self, class_):
         self._class = class_
         self._children = []
         self._element = None
 
-    def __call__(self, * args, ** kwargs):
+    def set_arguments(self, * args, ** kwargs):
         self._element = self._class(* args, ** kwargs)
         return self
 
@@ -187,6 +184,7 @@ class _TagImpl(object):
         return self
 
     def serialize(self, context):
+        """Proxy object to manage a tag before it becomes flattened."""
         return _flatten(self).serialize(context)
 
     def _list(self):
@@ -199,6 +197,7 @@ class _TagImpl(object):
             self._element.children = items
         return self._element
 
+
 class _ForEachTag(object):
     def __init__(self, enumerable, function):
         self._enumerable = enumerable
@@ -207,6 +206,7 @@ class _ForEachTag(object):
     def _list(self):
         return itertools.chain(
             * list(_list(self._function(e)) for e in self._enumerable))
+
 
 class _SpanTagImpl(object):
     def __init__(self):
@@ -222,6 +222,7 @@ class _SpanTagImpl(object):
     def _list(self):
         return itertools.chain(* list(_list(e) for e in self._children))
 
+
 class _SpanTag(object):
     def __init__(self):
         self._children = []
@@ -232,11 +233,13 @@ class _SpanTag(object):
     def _list(self):
         return _SpanTagImpl()._list()
 
+
 def _flatten(value):
     if isinstance(value, str):
         return value
     else:
         return value._flatten()
+
 
 def _list(value):
     if isinstance(value, str):
@@ -244,19 +247,30 @@ def _list(value):
     else:
         return value._list()
 
-#
-# Helper tags
-#
 
 def for_each(elements, function):
     """Allows to generate a tag for each items in an enumarable."""
     return _ForEachTag(elements, function)
 
 # Indent elements in the block.
-indent = Tag(IndentTag)
+indent = Tag(IndentTag)     # pylint: disable-msg=C0103
 
 # Group elements. These will be appended to the parent.
-span = _SpanTag()
+span = _SpanTag()           # pylint: disable-msg=C0103
 
 # Print a new line. It doesn't print indentation.
-new_line = Tag(NewLineTag)
+new_line = Tag(NewLineTag)  # pylint: disable-msg=C0103
+
+
+def serialize(template, options=SerializerOptions()):
+    """Serialize the provided template according to the language
+    specifications."""
+    context = SerializerContext(options)
+    template.serialize(context)
+    return context.output
+
+
+def flatten(template):
+    """Creates a 'flat' version of the template. It process special s to
+    create a simple structure for the template."""
+    return _flatten(template)
