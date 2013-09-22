@@ -16,7 +16,7 @@ AUTHOR = 'Luis Garcia'
 AUTHOR_EMAIL = 'lgarcia@codespot.in'
 URL = 'https://github.com/lrgar/scope'
 CLASSIFIERS = [
-    'Development Status :: 5 - Production/Stable',
+    'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
     'License :: OSI Approved :: MIT License',
     'Operating System :: OS Independent',
