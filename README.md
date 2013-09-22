@@ -53,9 +53,9 @@ Or if you downloaded the source code then just call,
 
 ## Resources
 
-Go to the [Getting started][getting-started] page to see a simple guide of how you can use the library.
+Go to the project's [Wiki][wiki] to learn about how you can use the library.
 
-[getting-started]: https://github.com/lrgar/scope/wiki/Getting-started
+[wiki]: https://github.com/lrgar/scope/wiki
 
 ## License
 
