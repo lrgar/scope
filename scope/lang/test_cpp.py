@@ -397,6 +397,51 @@ void foo(int a, string b);
 """
 
         self.assertEqual(scope.serialize(template), expected)
+        
+    def test_example_1(self):
+        expected = cpp.tfile [
+            '#include <string>',
+
+            cpp.tclass(name='App') [
+                cpp.tattribute('std::string', '_name'),
+                cpp.tmethod('std::string', 'GetName', visibility=cpp.PUBLIC,
+                            const=True) [
+                    'return this->_name;'
+                ],
+                cpp.tmethod('void', 'SetName', ['const std::string & value'],
+                            visibility=cpp.PUBLIC) [
+                    'this->_name = value;'
+                ]
+            ]
+        ]
+
+        def my_property(attr_type, attr_name, camel_name):
+            getter_name = 'Get{0}'.format(camel_name)
+            setter_name = 'Set{0}'.format(camel_name)
+            setter_arg = 'const {0} & value'.format(attr_type)
+
+            return scope.span[
+                cpp.tattribute(attr_type, attr_name),
+
+                cpp.tmethod(attr_type, getter_name, visibility=cpp.PUBLIC,
+                            const=True)[
+                    'return this->{0};'.format(attr_name)
+                ],
+
+                cpp.tmethod('void', setter_name, [setter_arg],
+                            visibility=cpp.PUBLIC)[
+                    'this->{0} = value;'.format(attr_name)
+                ]
+            ]
+
+        template = cpp.tfile[
+            '#include <string>',
+            cpp.tclass(name='App')[
+                my_property('std::string', '_name', 'Name')
+            ]
+        ]
+
+        self.assertEqual(scope.flatten(template), scope.flatten(expected))
 
 if __name__ == '__main__':
     unittest.main()
