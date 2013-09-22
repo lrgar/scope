@@ -1,5 +1,5 @@
 #
-# test.py
+# test_scope.py
 #
 # Copyright (c) 2013 Luis Garcia.
 # This source file is subject to terms of the MIT License. (See file LICENSE)
