@@ -225,7 +225,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
 
         self.assertEqual(scope.flatten(template), expected)
 
-    def test_tag_indent_3(self):
+    def test_tag_indent_1(self):
         template = mock_tag(name='parent')[
             scope.span[
                 mock_tag(name='a'),
