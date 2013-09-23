@@ -21,6 +21,7 @@ class SerializerOptions(object):
             SerializerOptions.DEFAULT_INDENTATION_CHARACTER
         self._indentation_factor = \
             SerializerOptions.DEFAULT_INDENTATION_FACTOR
+        self._extras = {}
 
     @property
     def indentation_character(self):
@@ -41,6 +42,10 @@ class SerializerOptions(object):
     def indentation_factor(self, value):
         """Set the factor of characters used for indentation"""
         self._indentation_factor = value
+
+    @property
+    def extras(self):
+        return self._extras
 
 
 class SerializerContext(object):
