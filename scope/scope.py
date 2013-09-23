@@ -239,6 +239,13 @@ class _SpanTag(object):
         return _SpanTagImpl()._flatten()
 
 
+class _NothingTag(object):
+    """Helper tag class for representing no element."""
+
+    def _flatten(self):
+        return []
+
+
 def for_each(elements, function):
     """Allows to generate a tag for each items in an enumarable."""
     return _ForEachTag(elements, function)
@@ -251,6 +258,9 @@ span = _SpanTag()           # pylint: disable-msg=C0103
 
 # Print a new line. It doesn't print indentation.
 new_line = Tag(NewLineTag)  # pylint: disable-msg=C0103
+
+# Empty tag used to fill a children list.
+nothing = _NothingTag()     # pylint: disable-msg=C0103
 
 
 def serialize(template, options=SerializerOptions()):

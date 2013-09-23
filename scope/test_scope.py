@@ -249,6 +249,28 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
 
         self.assertEqual(scope.flatten(template), expected)
 
+    def test_tag_nothing_1(self):
+        template = mock_tag(name='parent')[
+            scope.span[
+                mock_tag(name='a'),
+                scope.nothing,
+                mock_tag(name='b') [
+                    scope.nothing
+                ]
+            ],
+            scope.span[
+                scope.nothing
+            ]
+        ]
+
+        expected = MockTag(name='parent')
+        expected.children = [
+            MockTag(name='a'),
+            MockTag(name='b')
+        ]
+
+        self.assertEqual(scope.flatten(template), expected)
+
     def test_serialization_1(self):
         template = mock_tag(name='element')
 
