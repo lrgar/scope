@@ -44,10 +44,10 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         ]
 
         expected = MockTag(name='parent')
-        expected.children = [
+        expected.set_children([
             MockTag(name='child-1'),
             MockTag(name='child-2')
-        ]
+        ], True)
 
         self.assertEqual(scope.flatten(template), expected)
 
@@ -55,10 +55,10 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         template = mock_tag[mock_tag, mock_tag]
 
         expected = MockTag()
-        expected.children = [
+        expected.set_children([
             MockTag(),
             MockTag()
-        ]
+        ], True)
 
         self.assertEqual(scope.flatten(template), expected)
 
@@ -66,7 +66,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         template = mock_tag['abc', mock_tag]
 
         expected = MockTag()
-        expected.children = ['abc', MockTag()]
+        expected.set_children(['abc', MockTag()], True)
 
         self.assertEqual(scope.flatten(template), expected)
 
@@ -79,11 +79,11 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         ]
 
         expected = MockTag(name='parent')
-        expected.children = [
+        expected.set_children([
             MockTag(name='child-1'),
             MockTag(name='child-2'),
             MockTag(name='child-3')
-        ]
+        ], True)
 
         self.assertEqual(scope.flatten(template), expected)
 
@@ -101,14 +101,14 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         ]
 
         expected = MockTag(name='parent')
-        expected.children = [
+        expected.set_children([
             MockTag(name='child-1'),
             MockTag(name='child-2'),
             MockTag(name='child-3'),
             MockTag(name='child-4'),
             MockTag(name='child-5'),
             MockTag(name='child-6')
-        ]
+        ], True)
 
         self.assertEqual(scope.flatten(template), expected)
 
@@ -118,7 +118,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         ]
 
         expected = MockTag(name='parent')
-        expected.children = []
+        expected.set_children([], True)
 
         self.assertEqual(scope.flatten(template), expected)
 
@@ -131,10 +131,10 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         ]
 
         expected = MockTag(name='parent')
-        expected.children = [
+        expected.set_children([
             MockTag(name='a'),
             MockTag(name='b')
-        ]
+        ], True)
 
         self.assertEqual(scope.flatten(template), expected)
 
@@ -151,12 +151,12 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         ]
 
         expected = MockTag(name='parent')
-        expected.children = [
+        expected.set_children([
             MockTag(name='a'),
             MockTag(name='b'),
             MockTag(name='c'),
             MockTag(name='d')
-        ]
+        ], True)
 
         self.assertEqual(scope.flatten(template), expected)
 
@@ -173,12 +173,12 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         ]
 
         expected = MockTag(name='parent')
-        expected.children = [
+        expected.set_children([
             MockTag(name='a'),
             MockTag(name='b'),
             MockTag(name='c'),
             MockTag(name='d')
-        ]
+        ], True)
 
         self.assertEqual(scope.flatten(template), expected)
 
@@ -194,12 +194,12 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         ]
 
         expected = MockTag(name='parent')
-        expected.children = [
+        expected.set_children([
             MockTag(name='a'),
             MockTag(name='b'),
             MockTag(name='a'),
             MockTag(name='b')
-        ]
+        ], True)
 
         self.assertEqual(scope.flatten(template), expected)
 
@@ -209,7 +209,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         ]
 
         expected = MockTag(name='parent')
-        expected.children = []
+        expected.set_children([], True)
 
         self.assertEqual(scope.flatten(template), expected)
 
@@ -221,7 +221,7 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         ]
 
         expected = MockTag(name='parent')
-        expected.children = []
+        expected.set_children([], True)
 
         self.assertEqual(scope.flatten(template), expected)
 
@@ -238,14 +238,14 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         ]
 
         expected = MockTag(name='parent')
-        expected.children = [
+        expected.set_children([
             MockTag(name='a'),
             scope.IndentTag().set_children([
                 MockTag(name='b'),
                 MockTag(name='c')
-            ]),
+            ], True),
             MockTag(name='d')
-        ]
+        ], True)
 
         self.assertEqual(scope.flatten(template), expected)
 
@@ -264,10 +264,10 @@ class TestBaseLibrary(unittest.TestCase):  # pylint: disable-msg=R0904
         ]
 
         expected = MockTag(name='parent')
-        expected.children = [
+        expected.set_children([
             MockTag(name='a'),
-            MockTag(name='b')
-        ]
+            MockTag(name='b').set_children([], True)
+        ], True)
 
         self.assertEqual(scope.flatten(template), expected)
 

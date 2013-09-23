@@ -101,6 +101,7 @@ class TagBase(object):
 
     def __init__(self):
         self._children = []
+        self._children_defined = False
 
     def __repr__(self):
         return '{0} {1}'.format(self.__class__.__name__, self.__dict__)
@@ -108,9 +109,10 @@ class TagBase(object):
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
-    def set_children(self, children):
+    def set_children(self, value, defined):
         """Set the children of the object."""
-        self.children = children
+        self.children = value
+        self.children_defined = defined
         return self
 
     def serialize(self, context):
@@ -124,10 +126,20 @@ class TagBase(object):
         return self._children
 
     @children.setter
-    def children(self, children):
-        """Set the childrend of the object."""
-        self._children = children
-        return self
+    def children(self, value):
+        """Set the children of the object."""
+        self._children = value
+
+    @property
+    def children_defined(self):
+        """Indicates if the children was specified or it is the default empty
+        list."""
+        return self._children_defined
+
+    @children_defined.setter
+    def children_defined(self, value):
+        """Set if the childrend was defined."""
+        self._children_defined = value
 
 
 class Tag(object):
@@ -174,6 +186,7 @@ class _TagImpl(object):
     def __init__(self, class_):
         self._class = class_
         self._children = []
+        self._children_defined = False
         self._element = None
 
     def set_arguments(self, * args, ** kwargs):
@@ -185,6 +198,7 @@ class _TagImpl(object):
             self._children = list(children)
         else:
             self._children = [children]
+        self._children_defined = True
         return self
 
     def __len__(self):
@@ -193,6 +207,7 @@ class _TagImpl(object):
     def _flatten(self):
         itrs = (_flatten(t) for t in self._children)
         self._element.children = list(itertools.chain.from_iterable(itrs))
+        self._element.children_defined = self._children_defined
         return [self._element]
 
 
