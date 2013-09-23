@@ -20,6 +20,37 @@ PROTECTED = SingletonObject('protected')
 DEFAULT = SingletonObject('default')
 
 
+class _OptionsField(object):
+    def __init__(self, id, default):
+        self._id = id
+        self._default = default
+
+    def __hash__(self):
+        return hash(self._id)
+
+    @property
+    def id(self):
+        return self._id
+    
+    @property
+    def default(self):
+        return self._default
+
+
+OPEN_BRACE_IN_NEW_LINE_FOR_TYPES = _OptionsField(0, False)
+OPEN_BRACE_IN_NEW_LINE_FOR_METHODS = _OptionsField(1, False)
+OPEN_BRACE_IN_NEW_LINE_FOR_NAMESPACES = _OptionsField(2, False)
+OMIT_COMMENT_AFTER_END_BRACE_TYPES = _OptionsField(3, False)
+OMIT_COMMENT_AFTER_END_BRACE_NAMESPACES = _OptionsField(4, False)
+
+
+def _get_option_value(options, field):
+    if 'cpp' in options.extras and field in options.extras['cpp']:
+        return options.extras['cpp'][field]
+    else:
+        return field.default
+
+
 class CppFile(scope.TagBase):
     def serialize(self, context):
         for child in self.children:
@@ -32,17 +63,30 @@ class CppNamespace(scope.TagBase):
         self._name = name
 
     def serialize(self, context):
-        if self._name is None:
-            context.write('namespace {')
+        declaration = 'namespace'
+        if self._name is not None:
+            declaration += ' {0}'.format(self._name)
+
+        brace_in_new_line = _get_option_value(context.options,
+            OPEN_BRACE_IN_NEW_LINE_FOR_NAMESPACES)
+
+        if brace_in_new_line:
+            context.write(declaration)
+            context.write('{')
         else:
-            context.write('namespace {0} {{'.format(self._name))
+            context.write(declaration + ' {')
 
         context.indent()
         for child in self.children:
             context.serialize(child)
         context.unindent()
 
-        if self._name is None:
+        omit_comment = _get_option_value(context.options,
+            OMIT_COMMENT_AFTER_END_BRACE_NAMESPACES)
+
+        if omit_comment:
+            context.write('}')
+        elif self._name is None:
             context.write('} // namespace')
         else:
             context.write('}} // namespace {0}'.format(self._name))
@@ -63,13 +107,21 @@ class CppClassBase(scope.TagBase):
         self._superclasses = superclasses
 
     def serialize(self, context):
-        temp = '{0} {1}'.format(self._unit_name, self._name)
+        declaration = '{0} {1}'.format(self._unit_name, self._name)
+
+        temp = declaration
         if len(self._superclasses) > 0:
             f = lambda v, n: '{0} {1}'.format(_from_visibility_to_string(v), n)
             temp += ' : ' + ', '.join([f(v, n) for v, n in self._superclasses])
-        temp += ' {'
 
-        context.write(temp)
+        brace_in_new_line = _get_option_value(context.options,
+            OPEN_BRACE_IN_NEW_LINE_FOR_TYPES)
+
+        if brace_in_new_line:
+            context.write(temp)
+            context.write('{')
+        else:
+            context.write(temp + ' {')
 
         if self._default_visibility == PRIVATE:
             self._print_children(context, PRIVATE)
@@ -80,7 +132,13 @@ class CppClassBase(scope.TagBase):
 
         self._print_children(context, PROTECTED, 'protected:')
 
-        context.write('}}; // {0} {1}'.format(self._unit_name, self._name))
+        omit_comment = _get_option_value(context.options,
+            OMIT_COMMENT_AFTER_END_BRACE_TYPES)
+
+        if omit_comment:
+            context.write('};')
+        else:
+            context.write('}; // ' + declaration)
 
     def _print_children(self, context, visibility, section_name = None):
         selected = _filter_by_visibility(self.children,
@@ -138,8 +196,15 @@ class CppMethodBase(scope.TagBase):
 
         if self._const: temp += ' const'
 
+        brace_in_new_line = _get_option_value(context.options,
+            OPEN_BRACE_IN_NEW_LINE_FOR_METHODS)
+
         if len(self.children) > 0:
-            context.write(temp + ' {')
+            if brace_in_new_line:
+                context.write(temp)
+                context.write('{')
+            else:
+                context.write(temp + ' {')
             _indent_and_print_elements(context, self.children)
             context.write('}')
         elif self._implemented:

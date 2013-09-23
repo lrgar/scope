@@ -443,5 +443,130 @@ void foo(int a, string b);
 
         self.assertEqual(scope.flatten(template), scope.flatten(expected))
 
+    def test_custom_serialization_1(self):
+        template = cpp.tfile[
+            scope.new_line,
+            cpp.tnamespace(name='A')[
+                cpp.tnamespace(name='B')
+            ]
+        ]
+
+        expected = """
+namespace A
+{
+    namespace B
+    {
+    } // namespace B
+} // namespace A
+"""
+
+        options = scope.SerializerOptions()
+        options.extras['cpp'] = {
+            cpp.OPEN_BRACE_IN_NEW_LINE_FOR_NAMESPACES: True
+        }
+
+        self.assertEqual(scope.serialize(template, options), expected)
+
+    def test_custom_serialization_2(self):
+        template = cpp.tfile[
+            scope.new_line,
+            cpp.tnamespace(name='A')[
+                cpp.tnamespace(name='B')
+            ]
+        ]
+
+        expected = """
+namespace A {
+    namespace B {
+    }
+}
+"""
+
+        options = scope.SerializerOptions()
+        options.extras['cpp'] = {
+            cpp.OMIT_COMMENT_AFTER_END_BRACE_NAMESPACES: True
+        }
+
+        self.assertEqual(scope.serialize(template, options), expected)
+
+    def test_custom_serialization_3(self):
+        template = cpp.tfile[
+            scope.new_line,
+            cpp.tclass(name='A')
+        ]
+
+        expected = """
+class A
+{
+}; // class A
+"""
+
+        options = scope.SerializerOptions()
+        options.extras['cpp'] = {
+            cpp.OPEN_BRACE_IN_NEW_LINE_FOR_TYPES: True
+        }
+
+        self.assertEqual(scope.serialize(template, options), expected)
+
+    def test_custom_serialization_4(self):
+        template = cpp.tfile[
+            scope.new_line,
+            cpp.tstruct(name='A')
+        ]
+
+        expected = """
+struct A
+{
+}; // struct A
+"""
+
+        options = scope.SerializerOptions()
+        options.extras['cpp'] = {
+            cpp.OPEN_BRACE_IN_NEW_LINE_FOR_TYPES: True
+        }
+
+        self.assertEqual(scope.serialize(template, options), expected)
+
+    def test_custom_serialization_5(self):
+        template = cpp.tfile[
+            scope.new_line,
+            cpp.tstruct(name='A')
+        ]
+
+        expected = """
+struct A {
+};
+"""
+
+        options = scope.SerializerOptions()
+        options.extras['cpp'] = {
+            cpp.OMIT_COMMENT_AFTER_END_BRACE_TYPES: True
+        }
+
+        self.assertEqual(scope.serialize(template, options), expected)
+
+    def test_custom_serialization_6(self):
+        template = cpp.tfile[
+            scope.new_line,
+            cpp.tmethod('void', 'foo') [
+                '// do nothing'
+            ]
+        ]
+
+        expected = """
+void foo()
+{
+    // do nothing
+}
+"""
+
+        options = scope.SerializerOptions()
+        options.extras['cpp'] = {
+            cpp.OPEN_BRACE_IN_NEW_LINE_FOR_METHODS: True
+        }
+
+        self.assertEqual(scope.serialize(template, options), expected)
+
+
 if __name__ == '__main__':
     unittest.main()
