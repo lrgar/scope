@@ -175,15 +175,13 @@ class CppStruct(CppClassBase):
 
 class CppMethodBase(scope.TagBase):
     def __init__(self, return_type, name, arguments = [],
-                 visibility = DEFAULT, implemented = True,
-                 virtual = False, const = False):
+                 visibility = DEFAULT, virtual = False, const = False):
         super(CppMethodBase, self).__init__()
         self._return_type = return_type
         self._name = name
         self._visibility = visibility
         self._virtual = virtual
         self._arguments = arguments
-        self._implemented = implemented
         self._const = const
 
     def serialize(self, context):
@@ -207,7 +205,7 @@ class CppMethodBase(scope.TagBase):
                 context.write(temp + ' {')
             _indent_and_print_elements(context, self.children)
             context.write('}')
-        elif self._implemented:
+        elif self.children_defined:
             context.write(temp + ' {}')
         else:
             context.write(temp + ';')
@@ -233,44 +231,34 @@ class CppMethodBase(scope.TagBase):
         return self._const
 
     @property
-    def implemented(self):
-        return self._implemented
-
-    @property
     def visibility(self):
         return self._visibility
 
 
 class CppMethod(CppMethodBase):
     def __init__(self, return_type, name, arguments = [],
-                 visibility = DEFAULT, implemented = True,
-                 virtual = False, const = False):
+                 visibility = DEFAULT, virtual = False, const = False):
         super(CppMethod, self).__init__(
             return_type, name, arguments,
             visibility = visibility,
-            implemented = implemented,
             virtual = virtual,
             const = const
         )
 
 
 class CppConstructor(CppMethodBase):
-    def __init__(self, name, arguments = [], visibility = DEFAULT,
-                 implemented = True):
+    def __init__(self, name, arguments = [], visibility = DEFAULT):
         super(CppConstructor, self).__init__(
             None, name, arguments,
-            visibility = visibility,
-            implemented = implemented
+            visibility = visibility
         )
 
 
 class CppDestructor(CppMethodBase):
-    def __init__(self, name, visibility = DEFAULT, implemented = True,
-                 virtual = False):
+    def __init__(self, name, visibility = DEFAULT, virtual = False):
         super(CppDestructor, self).__init__(
             None, name, [],
             visibility = visibility,
-            implemented = implemented,
             virtual = virtual
         )
 

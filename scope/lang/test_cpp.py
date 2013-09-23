@@ -189,7 +189,9 @@ namespace {
     def test_cpp_serializer_12(self):
         template = cpp.tfile[
             scope.new_line,
-            cpp.tmethod('void', 'foo')
+            cpp.tmethod('void', 'foo')[
+                scope.nothing
+            ]
         ]
 
         expected = """
@@ -201,7 +203,9 @@ void foo() {}
     def test_cpp_serializer_13(self):
         template = cpp.tfile[
             scope.new_line,
-            cpp.tmethod('void', 'foo', ['int a'])
+            cpp.tmethod('void', 'foo', ['int a'])[
+                scope.nothing
+            ]
         ]
 
         expected = """
@@ -213,7 +217,9 @@ void foo(int a) {}
     def test_cpp_serializer_14(self):
         template = cpp.tfile[
             scope.new_line,
-            cpp.tmethod('void', 'foo', ['int a', 'string b'])
+            cpp.tmethod('void', 'foo', ['int a', 'string b'])[
+                scope.nothing
+            ]
         ]
 
         expected = """
@@ -226,7 +232,9 @@ void foo(int a, string b) {}
         template = cpp.tfile[
             scope.new_line,
             cpp.tmethod('void', 'foo', ['int a', 'string b'],
-                        virtual=True, const=True)
+                        virtual=True, const=True)[
+                scope.nothing
+            ]
         ]
 
         expected = """
@@ -255,7 +263,9 @@ int foo() {
         template = cpp.tfile[
             scope.new_line,
             cpp.tclass('A')[
-                cpp.tmethod('int', 'foo')
+                cpp.tmethod('int', 'foo')[
+                    scope.nothing
+                ]
             ]
         ]
 
@@ -271,7 +281,9 @@ class A {
         template = cpp.tfile[
             scope.new_line,
             cpp.tclass('A')[
-                cpp.tmethod('int', 'foo', visibility=cpp.PUBLIC)
+                cpp.tmethod('int', 'foo', visibility=cpp.PUBLIC)[
+                    scope.nothing
+                ]
             ]
         ]
 
@@ -325,7 +337,9 @@ public:
                 cpp.tctor('A', visibility=cpp.PUBLIC)[
                     '// do nothing'
                 ],
-                cpp.tctor('A', ['const A & other'])
+                cpp.tctor('A', ['const A & other'])[
+                    scope.nothing
+                ]
             ]
         ]
 
@@ -345,7 +359,9 @@ public:
         template = cpp.tfile[
             scope.new_line,
             cpp.tclass('A')[
-                cpp.tdtor('~A', virtual=True)
+                cpp.tdtor('~A', virtual=True)[
+                    scope.nothing
+                ]
             ]
         ]
 
@@ -388,8 +404,7 @@ enum A {};
     def test_cpp_serializer_25(self):
         template = cpp.tfile[
             scope.new_line,
-            cpp.tmethod('void', 'foo', ['int a', 'string b'],
-                        implemented=False)
+            cpp.tmethod('void', 'foo', ['int a', 'string b'])
         ]
 
         expected = """
