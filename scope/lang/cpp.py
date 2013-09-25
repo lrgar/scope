@@ -174,8 +174,8 @@ class CppStruct(CppClassBase):
 
 
 class CppMethodBase(scope.TagBase):
-    def __init__(self, return_type, name, arguments = [],
-                 visibility = DEFAULT, virtual = False, const = False):
+    def __init__(self, return_type, name, arguments=[], initialize=[],
+                 visibility=DEFAULT, virtual=False, const=False):
         super(CppMethodBase, self).__init__()
         self._return_type = return_type
         self._name = name
@@ -183,6 +183,7 @@ class CppMethodBase(scope.TagBase):
         self._virtual = virtual
         self._arguments = arguments
         self._const = const
+        self._initialize = initialize
 
     def serialize(self, context):
         temp = ''
@@ -197,7 +198,12 @@ class CppMethodBase(scope.TagBase):
         brace_in_new_line = _get_option_value(context.options,
             OPEN_BRACE_IN_NEW_LINE_FOR_METHODS)
 
+        initializations = ''
+        if len(self._initialize) > 0:
+            initializations = ' : ' + ', '.join(self._initialize)
+
         if len(self.children) > 0:
+            temp += initializations
             if brace_in_new_line:
                 context.write(temp)
                 context.write('{')
@@ -206,6 +212,7 @@ class CppMethodBase(scope.TagBase):
             _indent_and_print_elements(context, self.children)
             context.write('}')
         elif self.children_defined:
+            temp += initializations
             context.write(temp + ' {}')
         else:
             context.write(temp + ';')
@@ -233,6 +240,10 @@ class CppMethodBase(scope.TagBase):
     @property
     def visibility(self):
         return self._visibility
+    
+    @property
+    def initialize(self):
+        return self._initialize
 
 
 class CppMethod(CppMethodBase):
@@ -247,10 +258,11 @@ class CppMethod(CppMethodBase):
 
 
 class CppConstructor(CppMethodBase):
-    def __init__(self, name, arguments = [], visibility = DEFAULT):
+    def __init__(self, name, arguments=[], initialize=[], visibility=DEFAULT):
         super(CppConstructor, self).__init__(
             None, name, arguments,
-            visibility = visibility
+            initialize=initialize,
+            visibility=visibility
         )
 
 

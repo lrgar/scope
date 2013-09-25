@@ -413,6 +413,50 @@ void foo(int a, string b);
 
         self.assertEqual(scope.serialize(template), expected)
         
+    def test_cpp_serializer_26(self):
+        template = cpp.tfile[
+            scope.new_line,
+            cpp.tclass('A')[
+                cpp.tattribute('int', '_a'),
+                cpp.tctor('A', initialize=['_a(0)'], visibility=cpp.PUBLIC)[
+                    scope.nothing
+                ]
+            ]
+        ]
+
+        expected = """
+class A {
+    int _a;
+public:
+    A() : _a(0) {}
+}; // class A
+"""
+
+        self.assertEqual(scope.serialize(template), expected)
+    
+    def test_cpp_serializer_27(self):
+        template = cpp.tfile[
+            scope.new_line,
+            cpp.tclass('A')[
+                cpp.tattribute('int', '_a'),
+                cpp.tctor('A', initialize=['_a(0)'], visibility=cpp.PUBLIC)[
+                    '// also do nothing'
+                ]
+            ]
+        ]
+
+        expected = """
+class A {
+    int _a;
+public:
+    A() : _a(0) {
+        // also do nothing
+    }
+}; // class A
+"""
+
+        self.assertEqual(scope.serialize(template), expected)
+
     def test_example_1(self):
         expected = cpp.tfile [
             '#include <string>',
