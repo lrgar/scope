@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7d273b72-19d4-4508-b702-45711d279d19}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>test_scope.py</StartupFile>
+    <StartupFile>setup.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>
     </WorkingDirectory>
@@ -23,15 +23,17 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
-    <Compile Include="lang\cpp.py" />
-    <Compile Include="lang\test_cpp.py" />
-    <Compile Include="lang\__init__.py" />
-    <Compile Include="scope.py" />
-    <Compile Include="test_scope.py" />
-    <Compile Include="__init__.py" />
+    <Compile Include="scope\lang\cpp.py" />
+    <Compile Include="scope\lang\test_cpp.py" />
+    <Compile Include="scope\lang\__init__.py" />
+    <Compile Include="scope\scope.py" />
+    <Compile Include="scope\test_scope.py" />
+    <Compile Include="scope\__init__.py" />
+    <Compile Include="setup.py" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="lang\" />
+    <Folder Include="scope\" />
+    <Folder Include="scope\lang\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>
