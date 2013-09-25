@@ -10,7 +10,7 @@
 from distutils.core import setup
 
 NAME = 'scope'
-VERSION = '0.1.1'
+VERSION = '0.1.2b1'
 DESCRIPTION = 'Python library for creating code templates'
 AUTHOR = 'Luis Garcia'
 AUTHOR_EMAIL = 'lgarcia@codespot.in'
