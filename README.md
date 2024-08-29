@@ -43,11 +43,7 @@ It requires Python 2.6+ or 3.2+
 
 ## Installation
 
-You can use `pip`,
-
-    pip install scope
-
-Or if you downloaded the source code then just call,
+If you downloaded the source code then just call,
 
     python setup.py install
 
